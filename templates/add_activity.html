@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <title>Add Product</title>
+  </head>
+  <body class="add-activity">
+    <h1>what do you want to get good at?</h1>
+    <form method="POST">
+      {{ form.hidden_tag() }}
+      <p>{{ form.name.label }} {{ form.name }}</p>
+      <p>{{ form.color.label }} {{ form.color }}</p>
+      <p>{{ form.progress.label }} {{ form.progress }}</p>
+      <p>{{ form.submit }}</p>
+    </form>
+    <a href="{{ url_for('home') }}">Back to Home</a>
+  </body>
+</html>

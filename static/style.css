@@ -26,6 +26,18 @@ header img {
   /* flex-direction: row is default, so you could omit it */
 }
 
+button {
+  padding: 20px;
+  background-color: #f93827;
+  border-radius: 30px;
+  width: 100px;
+  margin-top: 15%;
+}
+button:hover {
+  background-color: #ffd65a;
+  cursor: pointer;
+}
+
 /* Reset the ul default styles and apply flex layout */
 .intro ul {
   list-style: none;
