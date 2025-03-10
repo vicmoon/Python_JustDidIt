@@ -38,6 +38,35 @@ button:hover {
   cursor: pointer;
 }
 
+.input_group {
+  margin-bottom: 15px;
+}
+
+.input_field input,
+.input_field select {
+  width: 30%;
+  padding: 8px;
+  border: 1px solid #f6f7c4;
+  border-radius: 5px;
+  background-color: #7bd3ea;
+}
+
+.submit_button {
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
 /* Reset the ul default styles and apply flex layout */
 .intro ul {
   list-style: none;

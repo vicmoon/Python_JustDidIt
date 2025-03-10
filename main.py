@@ -85,7 +85,7 @@ def add_activity():
 
 
 @app.route('/track')
-def tracking():
+def track():
     return render_template("tracking.html", days=get_days())
 if (__name__) == "__main__":
     app.run(debug=True)
