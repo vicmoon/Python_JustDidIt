@@ -9,15 +9,16 @@ now = dt.datetime.now()
 year = now.year
 days_in_year = 366 if calendar.isleap(year) else 365
 
-print(days_in_year)
+# print(days_in_year)
 def get_days():
     days = []
     for i in range(1, days_in_year + 1):
         days.append(i)
     return days
-        
-    
-    
+
+    # return [i for i in range(1, days_in_year + 1)]
+
+
         
 @app.route("/")
 def home():

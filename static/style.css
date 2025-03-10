@@ -1,0 +1,68 @@
+body {
+  background-color: #adb2d4;
+  color: #211c84;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  width: 100%;
+  max-height: 200px;
+}
+
+header img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 10px;
+}
+.intro {
+  margin-top: 10%;
+  padding: 20px;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  /* flex-direction: row is default, so you could omit it */
+}
+
+/* Reset the ul default styles and apply flex layout */
+.intro ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row; /* This ensures the li elements are in a row */
+  gap: 20px; /* Optional: adds spacing between list items */
+}
+
+/* Optional: style each list item */
+.intro li {
+  list-style: none;
+}
+
+/* Container that holds all day boxes */
+.calendar-container {
+  list-style: none;
+  padding: 10px;
+  margin-top: 5%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Spacing between boxes */
+}
+
+/* Each day styled as a box */
+.calendar-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 60px; /* Fixed width for each box */
+  height: 60px; /* Fixed height for each box */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #f5f5f5;
+  border-radius: 5px; /* Rounded corners, optional */
+  box-sizing: border-box;
+}
