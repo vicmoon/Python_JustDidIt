@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request, flash
 import datetime as dt
 import calendar
 from flask_sqlalchemy import SQLAlchemy
@@ -38,7 +38,7 @@ class Activity(db.Model):
     __tablename__ = "activity"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False, unique=True)
-    color = db.Column(db.String(250), nullable=False)  # Store selected color as text
+    color = db.Column(db.String(10), nullable=False)  # Store selected color as text
     progress = db.Column(db.String(250), nullable=False)  # Store selected progress as text
 
 with app.app_context():
@@ -49,11 +49,9 @@ with app.app_context():
 
 class ActivityForm(FlaskForm):
     name = StringField("Activity", validators=[DataRequired()])
+    color = StringField("Color", validators=[DataRequired()])
     
-    color_choices = [("red", "Red"), ("blue", "Blue"), ("green", "Green"), ("yellow", "Yellow")]
     progress_choices = [("new", "New"), ("in_progress", "In Progress"), ("completed", "Completed")]
-
-    color = SelectField("Color", choices=color_choices, validators=[DataRequired()])
     progress = SelectField("Progress", choices=progress_choices, validators=[DataRequired()])
     
     submit = SubmitField("Do It!")
@@ -72,7 +70,7 @@ def add_activity():
 
         new_activity = Activity(
             name = form.name.data, 
-            color= form.color.data, 
+            color= form.color.data,
             progress = form.progress.data
         )
 
@@ -82,6 +80,19 @@ def add_activity():
         return redirect(url_for('track'))
     return render_template("add_activity.html", form=form)
 
+
+
+@app.route('/update_activity_color/<int:activity_id>', methods=['POST'])
+def update_activity_color(activity_id):
+    new_color = request.form.get('activity_color')
+    activity = Activity.query.get(activity_id)
+    if activity:
+        activity.color = new_color
+        db.session.commit()
+        flash("Activity color updated successfully!", "success")
+    else:
+        flash("Activity not found.", "danger")
+    return redirect(url_for('track'))
 
 
 

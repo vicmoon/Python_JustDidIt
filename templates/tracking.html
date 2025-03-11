@@ -31,11 +31,18 @@
       <ul class="tracking">
         <li class="activity-item" data-activity-color="{{activity.color}}">
           {{activity.name}}:
-          <input
-            type="color"
-            class="activity-color-picker"
-            value="{{activity.color}}"
-          />
+          <form
+            method="POST"
+            action="{{ url_for('update_activity_color', activity_id=activity.id) }}"
+          >
+            <input
+              type="color"
+              name="activity_color"
+              class="activity-color-picker"
+              value="{{activity.color}}"
+            />
+            <button type="submit">Save</button>
+          </form>
         </li>
       </ul>
       {% endfor %}
