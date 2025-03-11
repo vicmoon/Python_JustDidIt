@@ -27,10 +27,18 @@
       <img src="{{ url_for('static', filename='didit.png') }}" alt="logo" />
     </header>
     <div class="intro">
-      <ul>
-        <li>Coding : 🔴</li>
-        <li>Sport: 🟡</li>
+      {% for activity in activities %}
+      <ul class="tracking">
+        <li class="activity-item" data-activity-color="{{activity.color}}">
+          {{activity.name}}:
+          <input
+            type="color"
+            class="activity-color-picker"
+            value="{{activity.color}}"
+          />
+        </li>
       </ul>
+      {% endfor %}
     </div>
     <ul class="calendar-container">
       {% for day in days %}

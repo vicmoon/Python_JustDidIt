@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 import datetime as dt
 import calendar
 from flask_sqlalchemy import SQLAlchemy
@@ -51,24 +51,25 @@ class ActivityForm(FlaskForm):
     name = StringField("Activity", validators=[DataRequired()])
     
     color_choices = [("red", "Red"), ("blue", "Blue"), ("green", "Green"), ("yellow", "Yellow")]
-    progress_choices = [("not_started", "Not Started"), ("in_progress", "In Progress"), ("completed", "Completed")]
+    progress_choices = [("new", "New"), ("in_progress", "In Progress"), ("completed", "Completed")]
 
     color = SelectField("Color", choices=color_choices, validators=[DataRequired()])
     progress = SelectField("Progress", choices=progress_choices, validators=[DataRequired()])
     
-    submit = SubmitField("Start tracking")
+    submit = SubmitField("Do It!")
 #display the form for the user to set their activities to track 
 #
         
 @app.route("/")
-def home():
-    
+def home():  
     return render_template("index.html")
-@app.route("/add_activity")
 
+
+@app.route("/add-activity", methods=["GET", "POST"])
 def add_activity():
     form = ActivityForm()
     if form.validate_on_submit():
+
         new_activity = Activity(
             name = form.name.data, 
             color= form.color.data, 
@@ -78,7 +79,7 @@ def add_activity():
         db.session.add(new_activity)
         db.session.commit()
         print("Activity added")
-        return redirect(url_for('home'))
+        return redirect(url_for('track'))
     return render_template("add_activity.html", form=form)
 
 
@@ -86,6 +87,8 @@ def add_activity():
 
 @app.route('/track')
 def track():
-    return render_template("tracking.html", days=get_days())
+    activities = Activity.query.all()
+
+    return render_template("tracking.html", days=get_days(), activities=activities)
 if (__name__) == "__main__":
     app.run(debug=True)

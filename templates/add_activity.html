@@ -5,7 +5,7 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
-    <title>Add Product</title>
+    <title>Add Activity</title>
   </head>
   <body class="add-activity">
     <h1>What do you want to get good at?</h1>
@@ -18,11 +18,6 @@
       </div>
 
       <div class="input_group">
-        <label for="{{ form.color.id }}">{{ form.color.label }}</label>
-        <div class="input_field">{{ form.color(class="form-control") }}</div>
-      </div>
-
-      <div class="input_group">
         <label for="{{ form.progress.id }}">{{ form.progress.label }}</label>
         <div class="input_field">{{ form.progress(class="form-control") }}</div>
       </div>
@@ -31,6 +26,6 @@
         {{ form.submit(class="btn btn-primary") }}
       </div>
     </form>
-    <a href="{{ url_for('home') }}">Back to Home</a>
+    <a href="{{ url_for('home') }}"><button>Home</button></a>
   </body>
 </html>
