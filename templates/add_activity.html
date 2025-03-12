@@ -9,17 +9,21 @@
   </head>
   <body class="add-activity">
     <h1>What do you want to get good at?</h1>
-    <form method="POST" action="{{ url_for('add_activity') }}">
-      {{ form.hidden_tag() }}
-      <div>{{ form.name.label }} {{ form.name() }}</div>
-      <div>
-        {{ form.color.label }}
-        <!-- Use an HTML5 color input if possible -->
-        <input type="color" name="color" value="#ff0000" />
-      </div>
-      <div>{{ form.progress.label }} {{ form.progress() }}</div>
-      <div>{{ form.submit() }}</div>
-    </form>
+    <div class="inner-container">
+      <form method="POST" action="{{ url_for('add_activity') }}">
+        {{ form.hidden_tag() }}
+        <div class="form_field">{{ form.name.label }} {{ form.name() }}</div>
+        <div class="form_field">
+          {{ form.color.label }}
+          <!-- Use an HTML5 color input if possible -->
+          <input type="color" name="color" value="#ff0000" />
+        </div>
+        <div class="form_field">
+          {{ form.progress.label }} {{ form.progress() }}
+        </div>
+        <div class="submit_button">{{ form.submit() }}</div>
+      </form>
+    </div>
     <a href="{{ url_for('home') }}"><button>Home</button></a>
   </body>
 </html>

@@ -5,13 +5,19 @@ body {
   margin: 0;
   padding: 0;
 }
-
-/* .tracking {
+.add-activity {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-} */
+  flex-direction: column;
+  justify-content: center;
+}
+
+.add-activity input,
+select {
+  text-align: center;
+  padding: 10px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+}
 
 header {
   width: 100%;
@@ -34,17 +40,29 @@ header img {
 
 .activity-item.selected {
   border: 2px solid #000;
-  border-radius: 20px;
+  border-radius: 30px;
   background-color: #ffd65a;
   padding: 10px;
 }
+#submit {
+  background-color: #f93827;
+  width: 100px;
+  padding: 15px;
+  border-radius: 30px;
+}
+
+#submit:hover {
+  background-color: #ffd65a;
+  cursor: pointer;
+}
+
 button,
 .btn-primary {
   padding: 15px;
   background-color: #f93827;
   border-radius: 30px;
   width: 100px;
-  margin-top: 5%;
+  margin-top: 25%;
 }
 button:hover {
   background-color: #ffd65a;
