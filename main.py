@@ -1,17 +1,23 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, session
 import datetime as dt
 import calendar
+from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Column, Integer, String, UniqueConstraint
 from wtforms import StringField, SubmitField, SelectField
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired
+from forms import ActivityForm, LoginForm, RegisterForm
+from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
+from functools import wraps
+from werkzeug.security import generate_password_hash, check_password_hash
 import my_creds
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = my_creds.SECRET_KEY
+login_manager = LoginManager()
 
 now = dt.datetime.now()
 year = now.year
@@ -33,31 +39,120 @@ class Base(DeclarativeBase):
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///activities.db"
 db = SQLAlchemy(app)
+login_manager.init_app(app)
+Bootstrap(app)
 
 class Activity(db.Model):
     __tablename__ = "activity"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(250), nullable=False, unique=True)
-    color = db.Column(db.String(10), nullable=False)  # Store selected color as text
-    progress = db.Column(db.String(250), nullable=False)  # Store selected progress as text
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
+    color: Mapped[str] = mapped_column(String(10), nullable=False)  # Store selected color as text
+    progress: Mapped[str] = mapped_column(String(250), nullable=False)  # Store selected progress as text
+
+
+class User(db.Model, UserMixin):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    email: Mapped[str] = mapped_column(String(100), unique=True)
+    password: Mapped[str] = mapped_column(String(100))
+    name: Mapped[str] = mapped_column(String(1000))
+
+
+
+# create a user loader callback 
+@login_manager.user_loader
+def load_user(id):
+    with db.session() as session:
+     return session.get(User, int(id))
+
+def admin_only(f):
+    @wraps(f)  # ✅ Preserves function metadata
+    def decorated(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.id != 1:
+            abort(403)  # ❌ Access denied
+        return f(*args, **kwargs)  # ✅ Allow access
+    return decorated
+
+
+
 
 with app.app_context():
     db.create_all()
 
 
-#create activity form 
 
-class ActivityForm(FlaskForm):
-    name = StringField("Activity", validators=[DataRequired()])
-    color = StringField("Color", validators=[DataRequired()])
-    
-    progress_choices = [("new", "New"), ("in_progress", "In Progress"), ("completed", "Completed")]
-    progress = SelectField("Progress", choices=progress_choices, validators=[DataRequired()])
-    
-    submit = SubmitField("Do It!")
-#display the form for the user to set their activities to track 
-#
+# ...............................................................................
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    form = RegisterForm()
+ 
+    if form.validate_on_submit():
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if not name or not email or not password:
+            flash("All fields are required", "danger")
+            return redirect(url_for('register'))  # Redirect instead of returning raw text
         
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash("User already exists. Please log in.", "warning")
+            return redirect(url_for('login'))
+        
+        # Hash password and create new user
+        hashed_pass = generate_password_hash(password, method='scrypt', salt_length=8)
+        new_user = User(name=name, email=email, password=hashed_pass)
+
+        db.session.add(new_user)
+        db.session.commit()
+        login_user(new_user)
+
+        session['name'] = name  # Store name in session
+        return redirect(url_for("home", name=name))  # redirect(url_for("home"))
+
+    return render_template("register.html", form=form)
+
+
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        email = request.form.get('email')
+        password= request.form.get("password")
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            flash("That email does not exist, please try again.")
+            return redirect(url_for('login'))
+
+        elif not check_password_hash(user.password, password):
+            flash('Password incorrect, please try again.')
+            return redirect(url_for('login'))
+        else:
+            login_user(user)
+
+            return redirect(url_for("track"))
+            
+        
+    return render_template("login.html", form=form)
+
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
+
 @app.route("/")
 def home():  
     return render_template("index.html")

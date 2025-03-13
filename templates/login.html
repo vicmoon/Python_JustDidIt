@@ -1,0 +1,26 @@
+{% include "header.html" %}
+<body>
+  <h1>Login</h1>
+  <form method="POST" action="{{ url_for('login') }}">
+    {{ form.hidden_tag() }}
+
+    <div>
+      <label for="email">{{ form.email.label }}</label>
+      {{ form.email(size=32) }} {% for error in form.email.errors %}
+      <span class="error">{{ error }}</span>
+      {% endfor %}
+    </div>
+
+    <div>
+      <label for="password">{{ form.password.label }}</label>
+      {{ form.password(size=32) }} {% for error in form.password.errors %}
+      <span class="error">{{ error }}</span>
+      {% endfor %}
+    </div>
+
+    <div>
+      <input type="submit" value="Login" />
+    </div>
+  </form>
+</body>
+{% include "footer.html" %}
