@@ -1,7 +1,7 @@
 {% include "header.html" %}
 <body>
   <h1>Register</h1>
-  <form method="POST" action="{{ url_for('login') }}">
+  <form method="POST" action="{{ url_for('register') }}">
     {{ form.hidden_tag() }}
     <div>
       <label for="name">{{ form.name.label }}</label>

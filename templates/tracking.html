@@ -1,58 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="{{ url_for('static', filename='favicon.png') }}"
-    />
-    <!-- Google fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Agu+Display&family=Major+Mono+Display&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
-    <!-- my stysheet -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <title>Just did it!</title>
-  </head>
-  <body>
-    <header>
-      <img src="{{ url_for('static', filename='didit.png') }}" alt="logo" />
-    </header>
-    <div class="intro">
-      {% for activity in activities %}
-      <ul class="tracking">
-        <li class="activity-item" data-activity-color="{{activity.color}}">
-          {{activity.name}}:
-          <form
-            method="POST"
-            action="{{ url_for('update_activity_color', activity_id=activity.id) }}"
-          >
-            <input
-              type="color"
-              name="activity_color"
-              class="activity-color-picker"
-              value="{{activity.color}}"
-            />
-            <button type="submit">Save</button>
-          </form>
-        </li>
-      </ul>
-      {% endfor %}
-    </div>
-    <ul class="calendar-container">
-      {% for day in days %}
-      <li class="calendar-box">{{ day }}</li>
-      {% endfor %}
+{% include "header.html" %}
+<body>
+  <div class="intro">
+    {% for activity in activities %}
+    <ul class="tracking">
+      <li class="activity-item" data-activity-color="{{activity.color}}">
+        {{activity.name}}:
+        <form
+          method="POST"
+          action="{{ url_for('update_activity_color', activity_id=activity.id) }}"
+        >
+          <input
+            type="color"
+            name="activity_color"
+            class="activity-color-picker"
+            value="{{activity.color}}"
+          />
+          <button type="submit">Save</button>
+        </form>
+      </li>
     </ul>
-    <!-- Include the JavaScript file -->
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
-</html>
+    {% endfor %}
+  </div>
+  <ul class="calendar-container">
+    {% for day in days %}
+    <li class="calendar-box">{{ day }}</li>
+    {% endfor %}
+  </ul>
+  <!-- Include the JavaScript file -->
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+{% include "footer.html" %}

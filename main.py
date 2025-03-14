@@ -3,8 +3,8 @@ import datetime as dt
 import calendar
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Column, Integer, String, UniqueConstraint
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import Column, Integer, String, UniqueConstraint, ForeignKey
 from wtforms import StringField, SubmitField, SelectField
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired
@@ -47,8 +47,11 @@ class Activity(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
-    color: Mapped[str] = mapped_column(String(10), nullable=False)  # Store selected color as text
-    progress: Mapped[str] = mapped_column(String(250), nullable=False)  # Store selected progress as text
+    color: Mapped[str] = mapped_column(String(10), nullable=False) 
+    progress: Mapped[str] = mapped_column(String(250), nullable=False)  
+
+    #foreign key linking the activity to the user who created it 
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
 
 
 class User(db.Model, UserMixin):
@@ -58,6 +61,10 @@ class User(db.Model, UserMixin):
     email: Mapped[str] = mapped_column(String(100), unique=True)
     password: Mapped[str] = mapped_column(String(100))
     name: Mapped[str] = mapped_column(String(1000))
+
+    #relationship to access all the activities created by the user 
+
+    activities: Mapped[list[Activity]] = relationship("Activity", backref="user", lazy=True)
 
 
 
@@ -93,6 +100,7 @@ def register():
         name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('password')
+        print()
 
         if not name or not email or not password:
             flash("All fields are required", "danger")
@@ -106,6 +114,7 @@ def register():
         # Hash password and create new user
         hashed_pass = generate_password_hash(password, method='scrypt', salt_length=8)
         new_user = User(name=name, email=email, password=hashed_pass)
+        print(f"{name}, {email}, {password}")
 
         db.session.add(new_user)
         db.session.commit()
@@ -114,6 +123,7 @@ def register():
         session['name'] = name  # Store name in session
         return redirect(url_for("home", name=name))  # redirect(url_for("home"))
 
+    print("Something was wrong")
     return render_template("register.html", form=form)
 
 

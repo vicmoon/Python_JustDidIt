@@ -1,8 +1,12 @@
 {% include "header.html" %}
 <body>
-  <header>
-    <img src="{{ url_for('static', filename='didit.png') }}" alt="logo" />
-  </header>
+  <div>
+    {% if not current_user.is_authenticated: %}
+    <h1>JUST DID IT! 🎯</h1>
+    {% else %}
+    <h1>{{ current_user.name }}'s Dashboard</h1>
+    {% endif %}
+  </div>
   <div class="start_button">
     <a href="{{ url_for('add_activity') }}">
       <button>Start</button>
