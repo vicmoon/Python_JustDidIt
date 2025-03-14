@@ -16,6 +16,9 @@ body {
   min-height: 100vh;
 }
 
+main {
+  flex: 1;
+}
 /* Header styling */
 
 .navbar {
@@ -206,6 +209,7 @@ button:hover {
 }
 
 footer {
+  margin-top: auto;
   background-color: #333;
   color: #fff;
   text-align: center;
