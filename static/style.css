@@ -51,11 +51,21 @@ main {
 .nav-links a:hover {
   color: #ff6347;
 }
+.tracking li {
+  list-style: none;
+}
 
 .add-activity {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.intro {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  align-self: start;
 }
 
 .add-activity input,
@@ -66,6 +76,13 @@ select {
   margin-bottom: 10px;
 }
 
+.activity-color-picker,
+input[type='color'].color_picker {
+  -webkit-appearance: none; /* Removes default WebKit styling */
+  border: none;
+  width: 3rem;
+  height: 3rem;
+}
 .register_container {
   margin-top: 20%;
   display: flex;
@@ -77,23 +94,17 @@ select {
   border-radius: 20px;
   margin-bottom: 10px;
 }
-
-.intro {
-  padding: 20px;
-  font-size: 20px;
-  display: flex;
-  justify-content: space-around;
-  margin-top: 15%;
+.activity-item {
+  width: 100px;
 }
-
 .activity-item.selected {
   border: 2px solid #000;
   border-radius: 30px;
-  background-color: #ffd65a;
   padding: 10px;
+  width: 100px;
 }
 #submit {
-  background-color: #f93827;
+  background-color: #ffab5b;
   width: 100px;
   padding: 15px;
   border-radius: 30px;
@@ -117,19 +128,6 @@ button:hover {
   cursor: pointer;
 }
 
-.input_group {
-  margin-bottom: 15px;
-}
-
-.input_field input,
-.input_field select {
-  width: 30%;
-  padding: 8px;
-  border: 1px solid #f6f7c4;
-  border-radius: 5px;
-  background-color: #7bd3ea;
-}
-
 .submit_button {
   margin-top: 10px;
 }
@@ -137,13 +135,28 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20%;
 }
 
 .btn-primary:hover {
   background-color: #ffd65a;
   cursor: pointer;
 }
+.login-form,
+.register-form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10%;
+}
+input {
+  padding: 10px;
+  width: px;
+  background-color: #c7d9dd;
+  border-radius: 30px;
+  margin-bottom: 10px;
+}
+
 .intro-quote {
   display: flex;
   justify-content: center;

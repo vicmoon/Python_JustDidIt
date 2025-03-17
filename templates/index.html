@@ -3,6 +3,7 @@
   <div class="intro-quote">
     {% if not current_user.is_authenticated: %}
     <h1>Success is the sum of small efforts, repeated day in and day out.</h1>
+
     {% else %}
     <h1>{{ current_user.name }}'s Dashboard</h1>
     {% endif %}

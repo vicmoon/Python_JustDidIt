@@ -7,8 +7,8 @@ class ActivityForm(FlaskForm):
     name = StringField("Activity", validators=[DataRequired()])
     color = StringField("Color", validators=[DataRequired()])
     
-    progress_choices = [("new", "New"), ("in_progress", "In Progress"), ("completed", "Completed")]
-    progress = SelectField("Progress", choices=progress_choices, validators=[DataRequired()])
+    # progress_choices = [("new", "New"), ("in_progress", "In Progress"), ("completed", "Completed")]
+    # progress = SelectField("State", choices=progress_choices, validators=[DataRequired()])
     
     submit = SubmitField("Do It!")
 

@@ -16,14 +16,15 @@
         <div class="form_field">
           {{ form.color.label }}
           <!-- Use an HTML5 color input if possible -->
-          <input type="color" name="color" value="#ff0000" />
-        </div>
-        <div class="form_field">
-          {{ form.progress.label }} {{ form.progress() }}
+          <input
+            type="color"
+            name="color"
+            value="#ff0000"
+            class="color_picker"
+          />
         </div>
         <div class="submit_button">{{ form.submit() }}</div>
       </form>
     </div>
-    <a href="{{ url_for('home') }}"><button>Home</button></a>
   </body>
 </html>

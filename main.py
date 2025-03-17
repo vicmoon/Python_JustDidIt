@@ -48,7 +48,7 @@ class Activity(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
     color: Mapped[str] = mapped_column(String(10), nullable=False) 
-    progress: Mapped[str] = mapped_column(String(250), nullable=False)  
+    # progress: Mapped[str] = mapped_column(String(250), nullable=False)  
 
     #foreign key linking the activity to the user who created it 
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
@@ -176,7 +176,8 @@ def add_activity():
         new_activity = Activity(
             name = form.name.data, 
             color= form.color.data,
-            progress = form.progress.data
+            # progress = form.progress.data,
+            user_id=current_user.id
         )
 
         db.session.add(new_activity)
