@@ -23,7 +23,7 @@ main {
 
 .navbar {
   background-color: #57b4ba;
-  padding: 10px 20px;
+  padding: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -144,21 +144,11 @@ button:hover {
   background-color: #ffd65a;
   cursor: pointer;
 }
-
-/* Reset the ul default styles and apply flex layout */
-.intro ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.intro-quote {
   display: flex;
-  justify-content: space-between;
-  flex-direction: row; /* This ensures the li elements are in a row */
-  gap: 20px; /* Optional: adds spacing between list items */
-}
-
-/* Optional: style each list item */
-.intro li {
-  list-style: none;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20%;
 }
 
 /* Container that holds all day boxes */
@@ -210,8 +200,8 @@ button:hover {
 
 footer {
   margin-top: auto;
-  background-color: #333;
-  color: #fff;
+  background-color: #adb2d4;
+  color: #211c84;
   text-align: center;
   padding: 20px;
 }
