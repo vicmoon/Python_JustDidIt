@@ -6,9 +6,9 @@
       <li
         class="activity-item"
         data-activity-id="{{ activity.id }}"
-        data-activity-color="{{activity.color}}"
+        data-activity-color="{{ activity.color }}"
       >
-        {{activity.name}}:
+        {{ activity.name }}:
         <form
           method="POST"
           action="{{ url_for('update_activity_color', activity_id=activity.id) }}"
@@ -17,14 +17,9 @@
             type="color"
             name="activity_color"
             class="activity-color-picker"
-            value="{{activity.color}}"
+            value="{{ activity.color }}"
           />
-          <button
-            type="submit"
-            style="background-color: {{ activity.color }}; color: black;"
-          >
-            Save
-          </button>
+          <button type="submit">Save</button>
         </form>
       </li>
     </ul>

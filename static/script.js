@@ -1,14 +1,16 @@
-// Global variable to store the currently selected color.
+// Global variables to store the currently selected color and activity ID.
 let selectedColor = null;
+let selectedActivityId = null;
 
 // Add click event listeners to each activity item.
 document.querySelectorAll('.activity-item').forEach((item) => {
   item.addEventListener('click', () => {
-    // When an activity is clicked, set selectedColor to its current color.
     const colorPicker = item.querySelector('.activity-color-picker');
     selectedColor = colorPicker.value;
+    // Save the selected activity id
+    selectedActivityId = item.dataset.activityId;
 
-    // Optional: visually indicate selection.
+    // Visually indicate selection.
     document
       .querySelectorAll('.activity-item')
       .forEach((i) => i.classList.remove('selected'));
@@ -20,7 +22,7 @@ document.querySelectorAll('.activity-item').forEach((item) => {
     .querySelector('.activity-color-picker')
     .addEventListener('change', (e) => {
       const newColor = e.target.value;
-      item.dataset.activityColor = e.target.value;
+      item.dataset.activityColor = newColor;
       if (item.classList.contains('selected')) {
         selectedColor = newColor;
       }
@@ -32,10 +34,10 @@ document.querySelectorAll('.activity-item').forEach((item) => {
       })
         .then((response) => response.text())
         .then((data) => {
-          console.log('color updated successfully:', data);
+          console.log('Color updated successfully:', data);
         })
         .catch((error) => {
-          console.error('Error updating the color ', error);
+          console.error('Error updating the color', error);
         });
     });
 });
@@ -43,10 +45,10 @@ document.querySelectorAll('.activity-item').forEach((item) => {
 // When a calendar box is clicked, mark it with the selected color.
 document.querySelectorAll('.calendar-box').forEach((box) => {
   box.addEventListener('click', () => {
-    if (selectedColor) {
+    if (selectedColor && selectedActivityId) {
       box.style.backgroundColor = selectedColor;
 
-      fetch(`/update_activity_color/${box.dataset.activityId}`, {
+      fetch(`/update_activity_color/${selectedActivityId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ activity_color: selectedColor }),
