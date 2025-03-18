@@ -162,7 +162,6 @@ def logout():
     return redirect(url_for('home'))
 
 
-
 @app.route("/")
 def home():  
     return render_template("index.html")
@@ -182,7 +181,7 @@ def add_activity():
 
         db.session.add(new_activity)
         db.session.commit()
-        print("Activity added")
+        flash('Activity added!')
         return redirect(url_for('track'))
     return render_template("add_activity.html", form=form)
 
@@ -192,10 +191,15 @@ def add_activity():
 def update_activity_color(activity_id):
     new_color = request.form.get('activity_color')
     activity = Activity.query.get(activity_id)
+
+
+    if activity.user_id != current_user.id:
+        abort(403)
+
     if activity:
         activity.color = new_color
         db.session.commit()
-        flash("Activity color updated successfully!", "success")
+        flash("Color updated successfully!", "success")
     else:
         flash("Activity not found.", "danger")
     return redirect(url_for('track'))
@@ -204,7 +208,7 @@ def update_activity_color(activity_id):
 
 @app.route('/track')
 def track():
-    activities = Activity.query.all()
+    activities = Activity.query.filter_by(user_id=current_user.id).all()
 
     return render_template("tracking.html", days=get_days(), activities=activities)
 if (__name__) == "__main__":

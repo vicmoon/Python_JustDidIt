@@ -9,13 +9,24 @@
     {% endif %}
   </div>
   {% if not current_user.is_authenticated: %}
-  <h3><a href="{{ url_for('login') }}"> Log in</a> to get started</h3>
-  {% else %}
-  <div class="start_button">
-    <a href="{{ url_for('add_activity') }}">
-      <button>Start</button>
+  <div class="all_buttons">
+    <a href="{{ url_for('login') }}">
+      <button>Login</button>
     </a>
   </div>
+  {% else %}
+  <section class="buttons">
+    <div class="all_buttons">
+      <a href="{{ url_for('add_activity') }}">
+        <button>Add</button>
+      </a>
+    </div>
+    <div class="all_buttons">
+      <a href="{{ url_for('track') }}">
+        <button>Track</button>
+      </a>
+    </div>
+  </section>
   {% endif %}
 </body>
 {% include "footer.html" %}
