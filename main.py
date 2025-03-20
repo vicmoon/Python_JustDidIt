@@ -23,7 +23,7 @@ now = dt.datetime.now()
 year = now.year
 days_in_year = 366 if calendar.isleap(year) else 365
 
-# print(days_in_year)
+
 def get_days():
     days = []
     for i in range(1, days_in_year + 1):
@@ -75,19 +75,18 @@ def load_user(id):
      return session.get(User, int(id))
 
 def admin_only(f):
-    @wraps(f)  # ✅ Preserves function metadata
+    @wraps(f)  
     def decorated(*args, **kwargs):
         if not current_user.is_authenticated or current_user.id != 1:
-            abort(403)  # ❌ Access denied
-        return f(*args, **kwargs)  # ✅ Allow access
+            abort(403)  
+        return f(*args, **kwargs)  
     return decorated
 
 
 
 
-with app.app_context():
-    db.create_all()
-
+# with app.app_context():
+#     db.create_all()
 
 
 # ...............................................................................
@@ -104,7 +103,7 @@ def register():
 
         if not name or not email or not password:
             flash("All fields are required", "danger")
-            return redirect(url_for('register'))  # Redirect instead of returning raw text
+            return redirect(url_for('register'))  
         
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
@@ -120,8 +119,8 @@ def register():
         db.session.commit()
         login_user(new_user)
 
-        session['name'] = name  # Store name in session
-        return redirect(url_for("home", name=name))  # redirect(url_for("home"))
+        session['name'] = name  
+        return redirect(url_for("home", name=name)) 
 
     print("Something was wrong")
     return render_template("register.html", form=form)
@@ -209,7 +208,13 @@ def update_activity_color(activity_id):
 @app.route('/track')
 def track():
     activities = Activity.query.filter_by(user_id=current_user.id).all()
-
     return render_template("tracking.html", days=get_days(), activities=activities)
+
+
+
+
+
+
+
 if (__name__) == "__main__":
     app.run(debug=True)

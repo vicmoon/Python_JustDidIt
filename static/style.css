@@ -148,6 +148,21 @@ button:hover {
   background-color: #ffd65a;
   cursor: pointer;
 }
+
+.login-form div,
+.register-form div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.login-form label,
+.register-form label {
+  width: 100px; /* Adjust this width to your preference */
+  text-align: right;
+  margin-right: 5px;
+}
+
 .login-form,
 .register-form {
   display: flex;
@@ -159,7 +174,6 @@ button:hover {
 input {
   padding: 10px;
   width: px;
-
   border-radius: 30px;
   margin-bottom: 10px;
 }
