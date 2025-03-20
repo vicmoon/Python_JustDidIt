@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, session
 import datetime as dt
-import calendar
+import calendar 
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -19,18 +19,21 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = my_creds.SECRET_KEY
 login_manager = LoginManager()
 
-now = dt.datetime.now()
-year = now.year
-days_in_year = 366 if calendar.isleap(year) else 365
+# now = dt.datetime.now()
+# year = now.year
+# days_in_year = 366 if calendar.isleap(year) else 365
 
 
-def get_days():
-    days = []
-    for i in range(1, days_in_year + 1):
-        days.append(i)
-    return days
+def get_days_by_month(year):
+    days_by_month = {}
+    for month in range(1, 13):
+        print(f"Processing year: {year}, month: {month}")  # Debug output
+        num_days = calendar.monthrange(year, month)[1]
+        days_by_month[calendar.month_name[month]] = list(range(1, num_days + 1))
+    return days_by_month
 
     # return [i for i in range(1, days_in_year + 1)]
+
 
 #created database 
 
@@ -208,7 +211,9 @@ def update_activity_color(activity_id):
 @app.route('/track')
 def track():
     activities = Activity.query.filter_by(user_id=current_user.id).all()
-    return render_template("tracking.html", days=get_days(), activities=activities)
+    year = dt.datetime.now().year
+    days_by_month = get_days_by_month(year)
+    return render_template("tracking.html", days_by_month=days_by_month, activities=activities)
 
 
 

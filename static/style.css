@@ -62,11 +62,13 @@ main {
   justify-content: center;
 }
 
-.intro {
+.intro-activities {
   list-style: none;
+  width: 1000px;
+  margin: 0 auto;
   display: flex;
   flex-direction: row;
-  align-self: start;
+  align-self: flex-start;
 }
 
 .add-activity input,
@@ -189,7 +191,9 @@ input {
 .calendar-container {
   list-style: none;
   padding: 10px;
+  width: 1000px;
   margin-top: 3%;
+  margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
   gap: 10px; /* Spacing between boxes */
