@@ -43,10 +43,18 @@
   <h2>{{ month }}</h2>
   <ul class="calendar-container">
     {% for day in days %}
-    <li class="calendar-box">{{ day }}</li>
-    {% endfor %}
+    <li class="calendar-box"
+    data-day="{{ day }}"
+    data-month="{{ month }}"
+    data-date="{{ "%04d-%02d-%02d"|format(year, month_numbers[month], day) }}">
+  {{ day }}
+</li>
+{% endfor %}
   </ul>
   {% endfor %}
+  <script>
+    const loggedDays = {{ logs | tojson | safe }};
+  </script>
   <!-- Include the JavaScript file -->
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

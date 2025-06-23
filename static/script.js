@@ -48,20 +48,48 @@ document.querySelectorAll('.calendar-box').forEach((box) => {
     if (selectedColor && selectedActivityId) {
       box.style.backgroundColor = selectedColor;
 
-      fetch(`/update_activity_color/${selectedActivityId}`, {
+      // Infer the date from the box and surrounding month/year
+      const day = box.innerText;
+      const monthName = box.closest('ul').previousElementSibling.innerText;
+      const month = new Date(`${monthName} 1, 2000`).getMonth() + 1; // Convert name to month index
+      const year = new Date().getFullYear(); // You can improve this if you show other years
+
+      const formattedDate = `${year}-${month
+        .toString()
+        .padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+      fetch('/log_activity_day', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ activity_color: selectedColor }),
+        body: new URLSearchParams({
+          activity_id: selectedActivityId,
+          date: formattedDate,
+        }),
       })
-        .then((response) => response.text())
+        .then((res) => res.text())
         .then((data) => {
-          console.log('Box color updated in database:', data);
+          console.log(data); // Optional
         })
-        .catch((error) => {
-          console.error('Error updating box color:', error);
-        });
+        .catch((error) => console.error('Error logging activity day:', error));
     } else {
       alert('Please select an activity first.');
+    }
+  });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!loggedDays || !Array.isArray(loggedDays)) return;
+
+  loggedDays.forEach((log) => {
+    const date = log.date;
+    const activityId = log.activity_id;
+    const color = log.activity?.color || '#ccc'; // fallback color
+
+    // Find matching calendar box
+    const box = document.querySelector(`.calendar-box[data-date="${date}"]`);
+    if (box) {
+      box.style.backgroundColor = color;
+      box.classList.add(`activity-${activityId}`);
     }
   });
 });

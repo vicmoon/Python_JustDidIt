@@ -4,7 +4,7 @@ import calendar
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import Column, Integer, String, UniqueConstraint, ForeignKey
+from sqlalchemy import Column, Integer, String, UniqueConstraint, ForeignKey, Date
 from wtforms import StringField, SubmitField, SelectField
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired
@@ -27,7 +27,7 @@ login_manager = LoginManager()
 def get_days_by_month(year):
     days_by_month = {}
     for month in range(1, 13):
-        print(f"Processing year: {year}, month: {month}")  # Debug output
+        #print(f"Processing year: {year}, month: {month}")  # Debug output
         num_days = calendar.monthrange(year, month)[1]
         days_by_month[calendar.month_name[month]] = list(range(1, num_days + 1))
     return days_by_month
@@ -70,6 +70,19 @@ class User(db.Model, UserMixin):
     activities: Mapped[list[Activity]] = relationship("Activity", backref="user", lazy=True)
 
 
+#Create activity log data model 
+
+class ActivityLog(db.Model):
+    __tablename__ = "activity_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    activity_id: Mapped[int] = mapped_column(Integer, ForeignKey('activity.id'), nullable=False)
+    date: Mapped[dt.date] = mapped_column(Date, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
+
+    # Relationship to link back to the activity
+    activity: Mapped[Activity] = relationship("Activity", backref="logs", lazy=True)
+
 
 # create a user loader callback 
 @login_manager.user_loader
@@ -88,8 +101,8 @@ def admin_only(f):
 
 
 
-# with app.app_context():
-#     db.create_all()
+with app.app_context():
+    db.create_all()
 
 
 # ...............................................................................
@@ -204,16 +217,57 @@ def update_activity_color(activity_id):
         flash("Color updated successfully!", "success")
     else:
         flash("Activity not found.", "danger")
-    return redirect(url_for('track'))
+    return "Color updated", 200
+
+@app.route("/log_activity_day", methods=["POST"])
+@login_required
+def log_activity_day():
+    activity_id = request.form.get("activity_id")
+    date_str = request.form.get("date")
+    date = dt.datetime.strptime(date_str, "%Y-%m-%d").date()
+
+    existing_log = ActivityLog.query.filter_by(
+        activity_id=activity_id,
+        date=date,
+        user_id=current_user.id
+    ).first()
+
+    if existing_log:
+        print("Already logged")
+    else:
+        new_log = ActivityLog(
+            activity_id=activity_id,
+            date=date,
+            user_id=current_user.id
+        )
+        db.session.add(new_log)
+        db.session.commit()
+        print("Activity logged")
+
+    return "Logged", 200  # ✅ This prevents the 500 error
+
 
 
 
 @app.route('/track')
 def track():
     activities = Activity.query.filter_by(user_id=current_user.id).all()
+    logs = ActivityLog.query.filter_by(user_id=current_user.id).all()
     year = dt.datetime.now().year
     days_by_month = get_days_by_month(year)
-    return render_template("tracking.html", days_by_month=days_by_month, activities=activities)
+
+    month_numbers = {month: index for index, month in enumerate(calendar.month_name) if month}
+
+    log_data = [{
+        "activity_id": log.activity_id,
+        "date": log.date.isoformat(),
+        "activity": {
+            "color": log.activity.color
+        }
+    } for log in logs]
+
+
+    return render_template("tracking.html", days_by_month=days_by_month, activities=activities, logs=log_data, year=year, month_numbers=month_numbers)
 
 
 
