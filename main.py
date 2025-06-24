@@ -203,21 +203,21 @@ def add_activity():
 
 
 @app.route('/update_activity_color/<int:activity_id>', methods=['POST'])
+@login_required
 def update_activity_color(activity_id):
     new_color = request.form.get('activity_color')
     activity = Activity.query.get(activity_id)
 
+    if not activity:
+        return "Activity not found", 404
 
     if activity.user_id != current_user.id:
-        abort(403)
+        return "Forbidden", 403
 
-    if activity:
-        activity.color = new_color
-        db.session.commit()
-        flash("Color updated successfully!", "success")
-    else:
-        flash("Activity not found.", "danger")
-    return "Color updated", 200
+    activity.color = new_color
+    db.session.commit()
+    return "Color updated", 200  # ✅ plain response for JS, no redirect
+
 
 @app.route("/log_activity_day", methods=["POST"])
 @login_required

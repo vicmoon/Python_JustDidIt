@@ -38,7 +38,14 @@
       </li>
     </ul>
     {% endfor %}
+    <div class="add-activity">
+      <!-- add new activity -->
+      <form method="POST" action="{{ url_for('add_activity') }}">
+        <!-- <input type="text" name="activity_name" placeholder="New Activity" required /> -->
+        <button type="submit">Add New Activity</button>
+    </div>
   </div>
+  
   {% for month, days in days_by_month.items() %}
   <h2>{{ month }}</h2>
   <ul class="calendar-container">
@@ -53,7 +60,7 @@
   </ul>
   {% endfor %}
   <script>
-    const loggedDays = {{ logs | tojson | safe }};
+    const loggedDays = {{ logs | default([]) | tojson | safe }};
   </script>
   <!-- Include the JavaScript file -->
   <script src="{{ url_for('static', filename='script.js') }}"></script>

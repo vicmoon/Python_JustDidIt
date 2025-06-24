@@ -37,8 +37,7 @@ main {
   border-radius: 50%;
   height: auto;
 }
-.track_button {
-}
+
 /* Navigation links styling */
 .nav-links a {
   color: #333;
@@ -55,20 +54,37 @@ main {
 .tracking li {
   list-style: none;
 }
+.intro-activities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: start;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.tracking {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activity-item {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+  min-width: 200px;
+}
 
 .add-activity {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-}
-
-.intro-activities {
-  list-style: none;
-  width: 1000px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: row;
-  align-self: flex-start;
+  border: 2px dashed #aaa;
+  padding: 1rem;
+  border-radius: 8px;
+  min-width: 200px;
+  cursor: pointer;
 }
 
 .add-activity input,
@@ -86,6 +102,9 @@ input[type='color'].color_picker {
   width: 3rem;
   height: 3rem;
 }
+
+/* REGISTER */
+
 .register_container {
   margin-top: 20%;
   display: flex;

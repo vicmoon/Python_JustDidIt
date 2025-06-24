@@ -35,6 +35,9 @@ document.querySelectorAll('.activity-item').forEach((item) => {
         .then((response) => response.text())
         .then((data) => {
           console.log('Color updated successfully:', data);
+
+          item.style.backgroundColor = newColor;
+          item.style.borderColor = newColor;
         })
         .catch((error) => {
           console.error('Error updating the color', error);
