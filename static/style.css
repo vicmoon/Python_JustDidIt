@@ -38,6 +38,15 @@ main {
   height: auto;
 }
 
+.alert {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 20px;
+  margin: 10px auto;
+  max-width: 600px;
+}
+
 /* Navigation links styling */
 .nav-links a {
   color: #333;
