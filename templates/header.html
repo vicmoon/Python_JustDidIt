@@ -6,7 +6,7 @@
     <link
       rel="icon"
       type="image/x-icon"
-      href="{{ url_for('static', filename='favicon.png') }}"
+      href="{{ url_for('static', filename='logo.png') }}"
     />
     <!-- Google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -28,10 +28,7 @@
     <nav class="navbar">
       <div class="logo">
         <a href="{{ url_for('home') }}">
-          <img
-            src="{{ url_for('static', filename='favicon.png') }}"
-            alt="logo"
-          />
+          <img src="{{ url_for('static', filename='logo.png') }}" alt="logo" />
         </a>
       </div>
       <div class="nav-links">

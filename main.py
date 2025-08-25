@@ -244,7 +244,7 @@ def log_activity_day():
         db.session.commit()
         print("Activity logged")
 
-    return "Logged", 200  # ✅ This prevents the 500 error
+    return "Logged", 200  
 
 
 
@@ -253,22 +253,44 @@ def log_activity_day():
 def track():
     activities = Activity.query.filter_by(user_id=current_user.id).all()
     logs = ActivityLog.query.filter_by(user_id=current_user.id).all()
-    year = dt.datetime.now().year
-    days_by_month = get_days_by_month(year)
 
-    month_numbers = {month: index for index, month in enumerate(calendar.month_name) if month}
+    today = dt.date.today()
+    year = request.args.get("year", type=int, default=today.year)
+    month_num = request.args.get("month", type=int, default=today.month)
+
+    # build just one month
+    num_days = calendar.monthrange(year, month_num)[1]
+    days = list(range(1, num_days + 1))
+
+    # helpers: name ↔ number mapping
+    month_numbers = {name: i for i, name in enumerate(calendar.month_name) if name}
+    month_names = {i: name for name, i in month_numbers.items()}
+    month_name = month_names[month_num]
+
+    # prev/next for arrows
+    prev_month = 12 if month_num == 1 else month_num - 1
+    prev_year  = year - 1 if month_num == 1 else year
+    next_month = 1 if month_num == 12 else month_num + 1
+    next_year  = year + 1 if month_num == 12 else year
 
     log_data = [{
         "activity_id": log.activity_id,
         "date": log.date.isoformat(),
-        "activity": {
-            "color": log.activity.color
-        }
+        "activity": {"color": log.activity.color}
     } for log in logs]
 
-
-    return render_template("tracking.html", days_by_month=days_by_month, activities=activities, logs=log_data, year=year, month_numbers=month_numbers)
-
+    return render_template(
+        "tracking.html",
+        year=year,
+        month=month_name,      # 👈 now a single string (e.g. "February")
+        month_num=month_num,   # 👈 numeric month (2)
+        days=days,             # 👈 list of numbers (1..28/29/30/31)
+        month_numbers=month_numbers,
+        activities=activities,
+        logs=log_data,
+        prev_month=prev_month, prev_year=prev_year,
+        next_month=next_month, next_year=next_year
+    )
 
 
 

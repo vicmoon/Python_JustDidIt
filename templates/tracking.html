@@ -42,23 +42,32 @@
       <!-- add new activity -->
       <form method="POST" action="{{ url_for('add_activity') }}">
         <!-- <input type="text" name="activity_name" placeholder="New Activity" required /> -->
-        <button type="submit">Add New Activity</button>
+        <button type="submit">Add Activity</button>
     </div>
   </div>
   
-  {% for month, days in days_by_month.items() %}
-  <h2>{{ month }}</h2>
-  <ul class="calendar-container">
-    {% for day in days %}
-    <li class="calendar-box"
-    data-day="{{ day }}"
-    data-month="{{ month }}"
-    data-date="{{ "%04d-%02d-%02d"|format(year, month_numbers[month], day) }}">
-  {{ day }}
-</li>
-{% endfor %}
-  </ul>
+ 
+ <h2>{{ month }} {{ year }}</h2>
+
+<div class="month-nav">
+  {% for mname, mnum in month_numbers.items() %}
+    <a href="{{ url_for('track', month=mnum) }}"
+       class="{% if mnum == current_month %}active{% endif %}">
+       {{ mname }}
+    </a>
   {% endfor %}
+</div>
+
+<ul class="calendar-container">
+  {% for day in days_by_month.items() %}
+    {% set date_str = "{:04d}-{:02d}-{:02d}".format(year, month_numbers[month], day) %}
+    <li class="calendar-box" data-date="{{ date_str }}">
+      {{ day }}
+    </li>
+  {% endfor %}
+</ul>
+
+
   <script>
     // Auto-dismiss flash messages after 3 seconds
     setTimeout(() => {
