@@ -47,25 +47,48 @@
   </div>
   
  
- <h2>{{ month }} {{ year }}</h2>
 
-<div class="month-nav">
-  {% for mname, mnum in month_numbers.items() %}
-    <a href="{{ url_for('track', month=mnum) }}"
-       class="{% if mnum == current_month %}active{% endif %}">
-       {{ mname }}
-    </a>
-  {% endfor %}
-</div>
+  <h2 style="text-align:center">{{ month }} {{ year }}</h2>
 
-<ul class="calendar-container">
-  {% for day in days_by_month.items() %}
-    {% set date_str = "{:04d}-{:02d}-{:02d}".format(year, month_numbers[month], day) %}
-    <li class="calendar-box" data-date="{{ date_str }}">
-      {{ day }}
-    </li>
-  {% endfor %}
-</ul>
+  <div class="month-nav">
+    <a href="{{ url_for('track', year=prev_year, month=prev_month) }}">← Prev</a>
+    <span class="divider">|</span>
+    <a href="{{ url_for('track', year=next_year, month=next_month) }}">Next →</a>
+  </div>
+  
+  <!-- Optional: compact month list -->
+  <div class="month-nav months">
+    {% for mname, mnum in month_numbers.items() %}
+      <a href="{{ url_for('track', year=year, month=mnum) }}"
+         class="{% if mnum == month_num %}active{% endif %}">
+        {{ mname }}
+      </a>
+    {% endfor %}
+  </div>
+  
+  <!-- Weekday header -->
+  <ul class="calendar-grid weekday-row">
+    <li>M</li><li>T</li><li>W</li><li>T</li><li>F</li><li>S</li><li>S</li>
+  </ul>
+  
+  <!-- 6-row (42 cells) calendar -->
+  <ul class="calendar-grid">
+    {# Leading blanks #}
+    {% for _ in range(leading_blanks) %}
+      <li class="calendar-box empty" aria-hidden="true"></li>
+    {% endfor %}
+  
+    {# Real days #}
+    {% for day in range(1, num_days + 1) %}
+      {% set date_str = "{:04d}-{:02d}-{:02d}".format(year, month_num, day) %}
+      <li class="calendar-box" data-date="{{ date_str }}">{{ day }}</li>
+    {% endfor %}
+  
+    {# Trailing blanks to reach 42 cells #}
+    {% for _ in range(trailing_blanks) %}
+      <li class="calendar-box empty" aria-hidden="true"></li>
+    {% endfor %}
+  </ul>
 
 
   <script>
