@@ -50,7 +50,8 @@ class Activity(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
-    color: Mapped[str] = mapped_column(String(10), nullable=False) 
+    icon: Mapped[str] = mapped_column(String(100), nullable=True, default='camera.png')  # NEW
+    #color: Mapped[str] = mapped_column(String(10), nullable=False) 
     # progress: Mapped[str] = mapped_column(String(250), nullable=False)  
 
     #foreign key linking the activity to the user who created it 
@@ -189,7 +190,7 @@ def add_activity():
 
         new_activity = Activity(
             name = form.name.data, 
-            color= form.color.data,
+            icon= form.icon.data,
             # progress = form.progress.data,
             user_id=current_user.id
         )
@@ -248,7 +249,8 @@ def log_activity_day():
 
 
 
-
+import json
+from collections import defaultdict
 @app.route('/track')
 def track():
     activities = Activity.query.filter_by(user_id=current_user.id).all()
@@ -283,6 +285,14 @@ def track():
         "activity": {"color": log.activity.color}
     } for log in logs]
 
+    icons_by_date = defaultdict(list)
+    for l in log_data:
+        if l["icon"]:
+            icons_by_date[l["date"]].append(l["icon"])
+
+
+    logs_json = json.dumps(log_data)
+
     return render_template(
         "tracking.html",
         year=year,
@@ -294,7 +304,8 @@ def track():
         trailing_blanks=trailing_blanks,
         month_numbers=month_numbers,
         activities=activities,
-        logs=log_data,
+        icons_by_date=icons_by_date,
+        logs_json=logs_json,
         prev_month=prev_month, prev_year=prev_year,
         next_month=next_month, next_year=next_year
     )

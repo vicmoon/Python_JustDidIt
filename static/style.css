@@ -307,6 +307,65 @@ input {
   transform: rotate(-45deg);
 }
 
+/* Icons */
+.form_field {
+  margin: 10px 0;
+}
+
+.errors {
+  color: #b00020;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+/* Icon picker styles */
+.icon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.icon-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.icon-option:hover {
+  border-color: #ccc;
+}
+
+.icon-option input {
+  display: none; /* hide radio button */
+}
+
+.icon-option img {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 6px;
+}
+
+.icon-option span {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+/* highlight selected */
+.icon-option input:checked + img {
+  border: 2px solid #211c84;
+  border-radius: 8px;
+}
+
+.submit_button {
+  margin-top: 16px;
+}
+
 /* Footer styling */
 
 footer {

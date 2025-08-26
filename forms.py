@@ -3,9 +3,40 @@ from wtforms import StringField, SubmitField, PasswordField, SelectField
 from wtforms.validators import DataRequired, URL, Length
 from flask_ckeditor import CKEditorField
 
+ICON_CHOICES = [
+    ("balloon.png", "🎈 Balloon"),
+    ("bike.png", "🚲 Bike"),
+    ("book.png", "📖 Book"),
+    ("briefcase.png", "💼 Briefcase"),
+    ("calculator.png", "🧮 Calculator"),
+    ("camera.png", "📷 Camera"),
+    ("cassette.png", "📼 Cassette"),
+    ("food.png", "🍽️ Food"),
+    ("globe.png", "🌍 Globe"),
+    ("lifestyle.png", "✨ Lifestyle"),
+    ("magazine.png", "📰 Magazine"),
+    ("medical.png", "⚕️ Medical"),
+    ("microfon.png", "🎤 Microphone"),   
+    ("music.png", "🎵 Music"),
+    ("navigation.png", "🧭 Navigation"),
+    ("networking.png", "🌐 Networking"),
+    ("news.png", "🗞️ News"),
+    ("photo.png", "📸 Photo"),
+    ("pig.png", "🐷 Pig"),
+    ("popcorn.png", "🍿 Popcorn"),
+    ("productivity.png", "📊 Productivity"),
+    ("research.png", "🔬 Research"),
+    ("shopping.png", "🛍️ Shopping"),
+    ("sports.png", "🏀 Sports"),
+    ("travel.png", "✈️ Travel"),
+    ("weather.png", "☀️ Weather"),
+]
+
+
 class ActivityForm(FlaskForm):
     name = StringField("Activity", validators=[DataRequired()])
-    color = StringField("Color", validators=[DataRequired()])
+    #color = StringField("Color", validators=[DataRequired()])
+    icon = SelectField("Icon", choices=ICON_CHOICES, validators=[DataRequired()])
     
     # progress_choices = [("new", "New"), ("in_progress", "In Progress"), ("completed", "Completed")]
     # progress = SelectField("State", choices=progress_choices, validators=[DataRequired()])
