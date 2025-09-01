@@ -1,15 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Add Activity</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-  </head>
-
-  <body class="add-activity">
+{# templates/add_activity.html #} {% extends "base.html" %} {% block title %} Add activity ·
+Just Did It{% endblock %} {% block content %}
     <h1>What do you want to get good at?</h1>
 
     <div class="inner-container">
@@ -47,4 +37,4 @@
     </div>
   </body>
 </html>
-{% include "footer.html" %}
+{% endblock %}
