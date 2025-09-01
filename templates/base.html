@@ -25,10 +25,10 @@
     <title>{% block title %}Just Did It{% endblock %}</title>
     {% block head_extra %}{% endblock %}
   </head>
-  <body>
+  <body class="layout">
     {% include "_nav.html" %}
 
-    <main id="page">{% block content %}{% endblock %}</main>
+    <main class="page">{% block content %}{% endblock %}</main>
 
     {% include "_footer.html" %} {% block scripts %}{% endblock %}
   </body>

@@ -1,3 +1,7 @@
+{# templates/auth_home.html #} {% extends "base.html" %} {% block title %}Home ·
+Just Did It{% endblock %} {% block content %} {% if not
+current_user.is_authenticated %}
+
 <section class="hero">
   <div class="intro-quote">
     <h1>{{ current_user.name }}’s Dashboard</h1>
@@ -17,3 +21,4 @@
     </div>
   </div>
 </section>
+{% endif %} {% endblock %}

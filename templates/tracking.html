@@ -1,42 +1,38 @@
 {# templates/tracking.html #} {% extends "base.html" %} {% block title %}Track ·
 Just Did It{% endblock %} {% block content %}
-<!-- Add activity -->
-<div class="intro-activities">
-  {% for activity in activities %}
-  <ul class="tracking">
-    <li
-      class="activity-item"
-      data-activity-id="{{ activity.id }}"
-      data-activity-color="{{ activity.color }}"
+<!-- Activities header -->
+<section class="container mb-3" style="max-width: 1100px">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2 class="h5 m-0">Your activities</h2>
+    <a class="btn btn-sm btn-primary" href="{{ url_for('add_activity') }}"
+      >Add Activity</a
     >
-      {{ activity.name }}:
-      <form
-        method="POST"
-        action="{{ url_for('update_activity_color', activity_id=activity.id) }}"
-      >
-        <input
-          type="color"
-          name="activity_color"
-          class="activity-color-picker"
-          value="{{ activity.color }}"
-        />
-        <button type="submit">Save</button>
-      </form>
-    </li>
-  </ul>
-  {% endfor %}
-
-  <div class="add-activity">
-    <form method="POST" action="{{ url_for('add_activity') }}">
-      <button type="submit">Add Activity</button>
-    </form>
   </div>
-</div>
+
+  {% if activities %}
+  <ul id="activityList" class="list-unstyled d-flex flex-wrap gap-3 mt-2">
+    {% for a in activities %}
+    <li class="activity-pill" data-id="{{ a.id }}" data-icon="{{ a.icon }}">
+      <img
+        src="{{ url_for('static', filename='icons/' ~ a.icon) }}"
+        alt=""
+        width="20"
+        height="20"
+        loading="lazy"
+      />
+      <span>{{ a.name }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-muted mt-2">No activities yet.</p>
+  {% endif %}
+</section>
 
 <!-- Month header / nav -->
 <h2 class="cal-title">{{ month }} {{ year }}</h2>
 
-<nav class="month-nav">
+<nav class="mointro-a">
   <a href="{{ url_for('track', year=prev_year, month=prev_month) }}">← Prev</a>
   <span class="divider">|</span>
   <a href="{{ url_for('track', year=next_year, month=next_month) }}">Next →</a>
