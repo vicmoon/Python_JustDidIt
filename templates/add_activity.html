@@ -1,30 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="utf-8" />
+    <title>Add Activity</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
-    <title>Add Activity</title>
   </head>
+
   <body class="add-activity">
     <h1>What do you want to get good at?</h1>
+
     <div class="inner-container">
       <form method="POST" action="{{ url_for('add_activity') }}">
         {{ form.hidden_tag() }}
-        <div class="form_field">{{ form.name.label }} {{ form.name() }}</div>
+
+        <!-- Name -->
         <div class="form_field">
-          {{ form.color.label }}
-          <!-- Use an HTML5 color input if possible -->
-          <input
-            type="color"
-            name="color"
-            value="#ff0000"
-            class="color_picker"
-          />
+          {{ form.name.label }}<br />
+          {{ form.name(class="form-control") }}
         </div>
-        <div class="submit_button">{{ form.submit() }}</div>
+
+        <!-- Icon picker -->
+        <div class="form_field">
+          <label>Choose an icon:</label>
+          <div class="icon-picker">
+            {% for value, label in form.icon.choices %}
+            <label class="icon-option">
+              <input type="radio" name="{{ form.icon.name }}" value="{{ value
+              }}" {% if (form.icon.data or '') == value %}checked{% endif %} />
+              <img
+                src="{{ url_for('static', filename='icons/' ~ value) }}"
+                alt="{{ label }}"
+              />
+              <span>{{ label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="submit_button">
+          {{ form.submit(class="btn btn-primary") }}
+        </div>
       </form>
     </div>
   </body>
 </html>
+{% include "footer.html" %}

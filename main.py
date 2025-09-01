@@ -50,7 +50,8 @@ class Activity(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
-    color: Mapped[str] = mapped_column(String(10), nullable=False) 
+    icon: Mapped[str] = mapped_column(String(100), nullable=True, default='camera.png')  # NEW
+    #color: Mapped[str] = mapped_column(String(10), nullable=False) 
     # progress: Mapped[str] = mapped_column(String(250), nullable=False)  
 
     #foreign key linking the activity to the user who created it 
@@ -189,7 +190,7 @@ def add_activity():
 
         new_activity = Activity(
             name = form.name.data, 
-            color= form.color.data,
+            icon= form.icon.data,
             # progress = form.progress.data,
             user_id=current_user.id
         )
@@ -248,7 +249,8 @@ def log_activity_day():
 
 
 
-
+import json
+from collections import defaultdict
 @app.route('/track')
 def track():
     activities = Activity.query.filter_by(user_id=current_user.id).all()
@@ -258,16 +260,20 @@ def track():
     year = request.args.get("year", type=int, default=today.year)
     month_num = request.args.get("month", type=int, default=today.month)
 
-    # build just one month
-    num_days = calendar.monthrange(year, month_num)[1]
-    days = list(range(1, num_days + 1))
+    # weekday of 1st day (Mon=0..Sun=6) and number of days in month
+    first_weekday, num_days = calendar.monthrange(year, month_num)
 
-    # helpers: name ↔ number mapping
+    # 6 full rows -> 42 cells
+    TOTAL = 42
+    leading_blanks = first_weekday                     # blanks before day 1
+    trailing_blanks = TOTAL - leading_blanks - num_days  # blanks after last day
+
+    # Maps
     month_numbers = {name: i for i, name in enumerate(calendar.month_name) if name}
     month_names = {i: name for name, i in month_numbers.items()}
     month_name = month_names[month_num]
 
-    # prev/next for arrows
+    # Prev/Next
     prev_month = 12 if month_num == 1 else month_num - 1
     prev_year  = year - 1 if month_num == 1 else year
     next_month = 1 if month_num == 12 else month_num + 1
@@ -279,15 +285,27 @@ def track():
         "activity": {"color": log.activity.color}
     } for log in logs]
 
+    icons_by_date = defaultdict(list)
+    for l in log_data:
+        if l["icon"]:
+            icons_by_date[l["date"]].append(l["icon"])
+
+
+    logs_json = json.dumps(log_data)
+
     return render_template(
         "tracking.html",
         year=year,
-        month=month_name,      # 👈 now a single string (e.g. "February")
-        month_num=month_num,   # 👈 numeric month (2)
-        days=days,             # 👈 list of numbers (1..28/29/30/31)
+        month=month_name,
+        month_num=month_num,
+        num_days=num_days,
+        first_weekday=first_weekday,
+        leading_blanks=leading_blanks,
+        trailing_blanks=trailing_blanks,
         month_numbers=month_numbers,
         activities=activities,
-        logs=log_data,
+        icons_by_date=icons_by_date,
+        logs_json=logs_json,
         prev_month=prev_month, prev_year=prev_year,
         next_month=next_month, next_year=next_year
     )

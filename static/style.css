@@ -2,11 +2,12 @@ html,
 body {
   height: 100%;
   margin: 0;
+  padding: 0;
 }
 
 body {
-  background-color: #ddf4e7;
   font-family: 'Roboto', sans-serif;
+  background-color: #9ecad6;
   color: #211c84;
   text-align: center;
   margin: 0;
@@ -16,9 +17,59 @@ body {
   min-height: 100vh;
 }
 
-main {
-  flex: 1;
+section {
+  scroll-snap-align: start;
 }
+
+section:nth-of-type(1) {
+  background-color: #9ecad6; /* soft orange */
+}
+
+section:nth-of-type(2) {
+  background-color: #a1c4fd; /* light blue */
+}
+
+section:nth-of-type(3) {
+  background-color: #c2e9fb; /* pastel aqua */
+}
+
+section {
+  min-height: 100vh; /* full screen height */
+  display: flex; /* use flexbox for centering */
+  align-items: center; /* center vertically */
+  justify-content: center; /* center horizontally */
+  padding: 20px; /* breathing space inside */
+  box-sizing: border-box; /* include padding in height calc */
+}
+.buttons-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.intro-quote {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  max-width: 700px;
+}
+
+.intro-text {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  font-size: 40px;
+}
+
+.intro-text-description {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-size: 30px;
+}
+
 /* Header styling */
 
 .navbar {
@@ -210,13 +261,6 @@ input {
   margin-bottom: 10px;
 }
 
-.intro-quote {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20%;
-}
-
 /* Container that holds all day boxes */
 .calendar-container {
   list-style: none;
@@ -228,33 +272,68 @@ input {
   flex-wrap: wrap;
   gap: 10px;
 }
+/* Nav */
+.month-nav {
+  margin: 8px 0 12px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.month-nav a {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  color: #333;
+}
+.month-nav a.active {
+  background: #211c84;
+  color: #fff;
+  font-weight: 600;
+}
+.month-nav .divider {
+  opacity: 0.5;
+}
 
-/* Each day styled as a box */
+/* Grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 60px); /* 7 columns */
+  gap: 6px;
+  justify-content: center;
+  margin: 6px 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.weekday-row li {
+  font-weight: 600;
+  text-align: center;
+  opacity: 0.8;
+}
+
+/* Day cells */
 .calendar-box {
   border: 1px solid #ccc;
-  padding: 10px;
-  width: 60px; /* Fixed width for each box */
-  height: 60px; /* Fixed height for each box */
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  background-color: #f5f5f5;
-  border-radius: 5px;
-  box-sizing: border-box;
-  cursor: pointer;
+  background: #f5f5f5;
+  border-radius: 6px;
   position: relative;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  transition: background-color 0.3s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.calendar-box.empty {
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: default;
 }
 
-.calendar-box:hover {
-  background-color: #eaeaea;
-}
-
-/* Crossed days */
+/* Crossed (completed) */
 .crossed::before,
 .crossed::after {
   content: '';
@@ -262,27 +341,86 @@ input {
   top: 50%;
   width: 100%;
   height: 2px;
-  background-color: #211c84;
+  background: #211c84;
   transform-origin: center;
 }
-
 .crossed::before {
   transform: rotate(45deg);
 }
-
 .crossed::after {
   transform: rotate(-45deg);
+}
+
+/* Icons */
+.form_field {
+  margin: 10px 0;
+}
+
+.errors {
+  color: #b00020;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+/* Icon picker styles */
+.icon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.icon-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.icon-option:hover {
+  border-color: #ccc;
+}
+
+.icon-option input {
+  display: none; /* hide radio button */
+}
+
+.icon-option img {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 6px;
+}
+
+.icon-option span {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+/* highlight selected */
+.icon-option input:checked + img {
+  border: 2px solid #211c84;
+  border-radius: 8px;
+}
+
+.submit_button {
+  margin-top: 16px;
 }
 
 /* Footer styling */
 
 footer {
   margin-top: auto;
-  background-color: #adb2d4;
-  color: #211c84;
+  min-height: 20%;
+  background-color: #171b36;
+  color: #ffffff;
   text-align: center;
   padding: 20px;
 }
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
   .navbar {
