@@ -148,11 +148,12 @@ section {
   list-style: none;
 }
 .intro-activities {
+  margin-top: 300px;
   display: flex;
-  flex-wrap: wrap;
+
   gap: 1rem;
   align-items: start;
-  max-width: 1000px;
+  justify-content: center;
   margin: 0 auto;
 }
 
@@ -171,6 +172,7 @@ section {
 
 .add-activity {
   display: flex;
+  margin-top: 100px;
   align-items: center;
   justify-content: center;
   border: 2px dashed #aaa;
