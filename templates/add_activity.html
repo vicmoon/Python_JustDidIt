@@ -2,7 +2,7 @@
 Just Did It{% endblock %} {% block content %}
     <h1>What do you want to get good at?</h1>
 
-    <div class="inner-container">
+    <div class="new-activity-container">
       <form method="POST" action="{{ url_for('add_activity') }}">
         {{ form.hidden_tag() }}
 
@@ -14,7 +14,7 @@ Just Did It{% endblock %} {% block content %}
 
         <!-- Icon picker -->
         <div class="form_field">
-          <label>Choose an icon:</label>
+          <!-- {{ form.icon.label }}<br /> -->
           <div class="icon-picker">
             {% for value, label in form.icon.choices %}
             <label class="icon-option">

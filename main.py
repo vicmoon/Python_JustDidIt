@@ -44,16 +44,10 @@ login_manager.init_app(app)
 Bootstrap(app)
 
 class Activity(db.Model):
-    __tablename__ = "activity"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
-    icon: Mapped[str] = mapped_column(String(100), nullable=True, default='camera.png')  # NEW
-    #color: Mapped[str] = mapped_column(String(10), nullable=False) 
-    # progress: Mapped[str] = mapped_column(String(250), nullable=False)  
-
-    #foreign key linking the activity to the user who created it 
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), nullable=False, unique=True)
+    icon = db.Column(db.String(120), nullable=False)   # new
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
 class User(db.Model, UserMixin):
@@ -189,7 +183,6 @@ def add_activity():
         new_activity = Activity(
             name = form.name.data, 
             icon= form.icon.data,
-            # progress = form.progress.data,
             user_id=current_user.id
         )
 

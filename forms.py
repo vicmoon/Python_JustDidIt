@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, SelectField
+from wtforms import StringField, SubmitField, PasswordField, SelectField, RadioField
 from wtforms.validators import DataRequired, URL, Length
 from flask_ckeditor import CKEditorField
 
@@ -35,12 +35,7 @@ ICON_CHOICES = [
 
 class ActivityForm(FlaskForm):
     name = StringField("Activity", validators=[DataRequired()])
-    #color = StringField("Color", validators=[DataRequired()])
-    icon = SelectField("Icon", choices=ICON_CHOICES, validators=[DataRequired()])
-    
-    # progress_choices = [("new", "New"), ("in_progress", "In Progress"), ("completed", "Completed")]
-    # progress = SelectField("State", choices=progress_choices, validators=[DataRequired()])
-    
+    icon = RadioField("Icon", choices=ICON_CHOICES, validators=[DataRequired()])
     submit = SubmitField("Do It!")
 
 class RegisterForm(FlaskForm):
