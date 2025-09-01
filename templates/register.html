@@ -1,53 +1,51 @@
-{% include "header.html" %}
-<body>
-  {% with messages = get_flashed_messages(with_categories=true) %} {% if
-  messages %}
-  <div class="container mt-3">
-    {% for category, message in messages %}
-    <div
-      class="alert alert-{{ category }} alert-dismissible fade show"
-      role="alert"
-    >
-      {{ message }}
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-      ></button>
-    </div>
+{# templates/register.html #} {% extends "base.html" %} {% block title %}Track ·
+Just Did It{% endblock %} {% block content %} {% with messages =
+get_flashed_messages(with_categories=true) %} {% if messages %}
+<div class="container mt-3">
+  {% for category, message in messages %}
+  <div
+    class="alert alert-{{ category }} alert-dismissible fade show"
+    role="alert"
+  >
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %} {% endwith %}
+
+<h1>Register</h1>
+<form method="POST" action="{{ url_for('register') }}" class="register-form">
+  {{ form.hidden_tag() }}
+  <div>
+    <label for="name">{{ form.name.label }}:</label>
+    {{ form.name(size=38) }} {% for error in form.name.errors %}
+    <span class="error">{{ error }}</span>
     {% endfor %}
   </div>
-  {% endif %} {% endwith %}
 
-  <h1>Register</h1>
-  <form method="POST" action="{{ url_for('register') }}" class="register-form">
-    {{ form.hidden_tag() }}
-    <div>
-      <label for="name">{{ form.name.label }}:</label>
-      {{ form.name(size=38) }} {% for error in form.name.errors %}
-      <span class="error">{{ error }}</span>
-      {% endfor %}
-    </div>
+  <div>
+    <label for="email">{{ form.email.label }}:</label>
+    {{ form.email(size=38) }} {% for error in form.email.errors %}
+    <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
 
-    <div>
-      <label for="email">{{ form.email.label }}:</label>
-      {{ form.email(size=38) }} {% for error in form.email.errors %}
-      <span class="error">{{ error }}</span>
-      {% endfor %}
-    </div>
+  <div>
+    <label for="password">{{ form.password.label }}:</label>
+    {{ form.password(size=38) }} {% for error in form.password.errors %}
+    <span class="error">{{ error }}</span>
+    {% endfor %}
+  </div>
 
-    <div>
-      <label for="password">{{ form.password.label }}:</label>
-      {{ form.password(size=38) }} {% for error in form.password.errors %}
-      <span class="error">{{ error }}</span>
-      {% endfor %}
-    </div>
+  <div>
+    <input id="submit" type="submit" value="Register" />
+  </div>
+</form>
 
-    <div>
-      <input id="submit" type="submit" value="Register" />
-    </div>
-  </form>
-</body>
-
-{% include "footer.html" %}
+{% endblock %}

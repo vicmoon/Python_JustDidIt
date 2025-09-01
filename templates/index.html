@@ -1,54 +1,60 @@
-{% include "header.html" %}
-<body>
-  <section>
-    <div class="intro-quote">
-      {% if not current_user.is_authenticated: %}
-      <h1>Success is the sum of small efforts, repeated day in and day out.</h1>
+{# templates/index.html #} {% extends "base.html" %} {% block title %}Home ·
+Just Did It{% endblock %} {% block content %} {% if not
+current_user.is_authenticated %}
+<section class="hero">
+  <div class="intro-quote">
+    <h1>Success is the sum of small efforts, repeated day in and day out.</h1>
+  </div>
+</section>
 
-      {% else %}
-      <h1>{{ current_user.name }}'s Dashboard</h1>
-      {% endif %}
-    </div>
-  </section>
-  <section class="text-section">
-    <div class="intro-text">
-      <h2>Small habits, big changes.</h2>
-      <p>
-        Nearly half of what we do each day runs on autopilot. That means,
-        <em>every little habit matters.</em> Build the right ones, repeat them,
-        and watch small steps turn into lasting transformation.
-      </p>
-    </div>
-  </section>
-  <section class="buttons-section">
-    <div class="intro-text-description">
-      <p>
-        Get started by adding an activity you want to track. Log your
-        progress each day. <br class="consistenty-text">Consistency is key to turning actions into habits. </br> 
-      </p>
-    </div>
-    <div class="buttons"> 
-    {% if not current_user.is_authenticated: %}
+<section class="text-section">
+  <div class="intro-text">
+    <h2>Small habits, big changes.</h2>
+    <p>
+      Nearly half of what we do each day runs on autopilot.
+      <em>Every little habit matters.</em>
+      Build the right ones, repeat them, and watch small steps turn into lasting
+      transformation.
+    </p>
+  </div>
+</section>
+
+<section class="buttons-section">
+  <div class="intro-text-description">
+    <p>
+      Get started by adding an activity you want to track. Log your progress
+      each day.
+      <br class="consistency-text" />Consistency is key to turning actions into
+      habits.
+    </p>
+  </div>
+  <div class="buttons">
     <div class="all_buttons">
-      <a href="{{ url_for('login') }}">
-        <button>Login</button>
-      </a>
+      <a href="{{ url_for('login') }}"><button>Login</button></a>
     </div>
-    {% else %}
-    <section class="buttons">
-      <div class="all_buttons">
-        <a href="{{ url_for('add_activity') }}">
-          <button>Add</button>
-        </a>
-      </div>
-      <div class="all_buttons">
-        <a href="{{ url_for('track') }}">
-          <button>Track</button>
-        </a>
-      </div>
-      </div>
-    </section>
-    {% endif %}
-  </section>
-</body>
-{% include "footer.html" %}
+    <div class="all_buttons">
+      <a href="{{ url_for('register') }}"><button>Register</button></a>
+    </div>
+  </div>
+</section>
+{% else %}
+<section class="hero">
+  <div class="intro-quote">
+    <h1>{{ current_user.name }}’s Dashboard</h1>
+  </div>
+</section>
+
+<section class="buttons-section">
+  <div class="intro-text-description">
+    <p>Jump back into your streaks and keep the momentum.</p>
+  </div>
+  <div class="buttons">
+    <div class="all_buttons">
+      <a href="{{ url_for('add_activity') }}"><button>Add</button></a>
+    </div>
+    <div class="all_buttons">
+      <a href="{{ url_for('track') }}"><button>Track</button></a>
+    </div>
+  </div>
+</section>
+{% endif %} {% endblock %}

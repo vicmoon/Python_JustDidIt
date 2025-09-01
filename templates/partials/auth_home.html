@@ -1,0 +1,19 @@
+<section class="hero">
+  <div class="intro-quote">
+    <h1>{{ current_user.name }}’s Dashboard</h1>
+  </div>
+</section>
+
+<section class="buttons-section">
+  <div class="intro-text-description">
+    <p>Jump back into your streaks and keep the momentum.</p>
+  </div>
+  <div class="buttons">
+    <div class="all_buttons">
+      <a href="{{ url_for('add_activity') }}"><button>Add</button></a>
+    </div>
+    <div class="all_buttons">
+      <a href="{{ url_for('track') }}"><button>Track</button></a>
+    </div>
+  </div>
+</section>

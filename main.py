@@ -19,10 +19,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = my_creds.SECRET_KEY
 login_manager = LoginManager()
 
-# now = dt.datetime.now()
-# year = now.year
-# days_in_year = 366 if calendar.isleap(year) else 365
-
+# make current_year available in all templates
+app.jinja_env.globals['current_year'] = dt.datetime.utcnow().year
 
 def get_days_by_month(year):
     days_by_month = {}

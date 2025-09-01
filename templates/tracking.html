@@ -1,128 +1,114 @@
-{% include "header.html" %}
-<body>
-  {% with messages = get_flashed_messages(with_categories=true) %} {% if
-  messages %}
-  <div class="container mt-3">
-    {% for category, message in messages %}
-    <div class="alert alert-{{ category }} alert-dismissible fade" role="alert">
-      {{ message }}
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %} {% endwith %}
-
-  <!-- Add activity -->
-
-  <div class="intro-activities">
-    {% for activity in activities %}
-    <ul class="tracking">
-      <li
-        class="activity-item"
-        data-activity-id="{{ activity.id }}"
-        data-activity-color="{{ activity.color }}"
+{# templates/tracking.html #} {% extends "base.html" %} {% block title %}Track ·
+Just Did It{% endblock %} {% block content %}
+<!-- Add activity -->
+<div class="intro-activities">
+  {% for activity in activities %}
+  <ul class="tracking">
+    <li
+      class="activity-item"
+      data-activity-id="{{ activity.id }}"
+      data-activity-color="{{ activity.color }}"
+    >
+      {{ activity.name }}:
+      <form
+        method="POST"
+        action="{{ url_for('update_activity_color', activity_id=activity.id) }}"
       >
-        {{ activity.name }}:
-        <form
-          method="POST"
-          action="{{ url_for('update_activity_color', activity_id=activity.id) }}"
-        >
-          <input
-            type="color"
-            name="activity_color"
-            class="activity-color-picker"
-            value="{{ activity.color }}"
-          />
-          <button type="submit">Save</button>
-        </form>
-      </li>
-    </ul>
-    {% endfor %}
-    <div class="add-activity">
-      <!-- add new activity -->
-      <form method="POST" action="{{ url_for('add_activity') }}">
-        <!-- <input type="text" name="activity_name" placeholder="New Activity" required /> -->
-        <button type="submit">Add Activity</button>
-      </form>
-    </div>
-  </div>
-
-  <!--Display days -->
-  <h2 style="text-align: center">{{ month }} {{ year }}</h2>
-
-  <div class="month-nav">
-    <a href="{{ url_for('track', year=prev_year, month=prev_month) }}"
-      >← Prev</a
-    >
-    <span class="divider">|</span>
-    <a href="{{ url_for('track', year=next_year, month=next_month) }}"
-      >Next →</a
-    >
-  </div>
-
-  <!-- Optional: compact month list -->
-  <div class="month-nav months">
-    {% for mname, mnum in month_numbers.items() %}
-    <a
-      href="{{ url_for('track', year=year, month=mnum) }}"
-      class="{% if mnum == month_num %}active{% endif %}"
-    >
-      {{ mname }}
-    </a>
-    {% endfor %}
-  </div>
-
-  <!-- Weekday header -->
-  <ul class="calendar-grid weekday-row">
-    <li>M</li>
-    <li>T</li>
-    <li>W</li>
-    <li>T</li>
-    <li>F</li>
-    <li>S</li>
-    <li>S</li>
-  </ul>
-
-  <!-- 6-row (42 cells) calendar -->
-  <ul class="calendar-grid">
-    {# Leading blanks #} {% for _ in range(leading_blanks) %}
-    <li class="calendar-box empty" aria-hidden="true"></li>
-    {% endfor %} {# Real days #} {% for day in range(1, num_days + 1) %} {% set
-    date_str = "{:04d}-{:02d}-{:02d}".format(year, month_num, day) %}
-    <li class="calendar-box" data-date="{{ date_str }}">
-      <span class="day-number">{{ day }}</span>
-      <div class="day-icons">
-        {% for icon in icons_by_date.get(date_str, []) %}
-        <img
-          src="{{ url_for('static', filename='icons/' ~ icon) }}"
-          alt=""
-          class="day-icon"
+        <input
+          type="color"
+          name="activity_color"
+          class="activity-color-picker"
+          value="{{ activity.color }}"
         />
-        {% endfor %}
-      </div>
+        <button type="submit">Save</button>
+      </form>
     </li>
-
-    {% endfor %} {# Trailing blanks to reach 42 cells #} {% for _ in
-    range(trailing_blanks) %}
-    <li class="calendar-box empty" aria-hidden="true"></li>
-    {% endfor %}
   </ul>
+  {% endfor %}
 
-  <script>
-    // Auto-dismiss flash messages after 3 seconds
-    setTimeout(() => {
-      document.querySelectorAll('.alert').forEach((alert) => {
-        alert.classList.remove('show'); // Bootstrap fade out
-        alert.classList.add('fade');
-        setTimeout(() => alert.remove(), 500); // Remove after fade transition
-      });
-    }, 2000);
-  </script>
+  <div class="add-activity">
+    <form method="POST" action="{{ url_for('add_activity') }}">
+      <button type="submit">Add Activity</button>
+    </form>
+  </div>
+</div>
 
-  <script>
-    const loggedDays = {{ logs_json | safe }};
-    console.log(loggedDays);
-  </script>
-  <!-- Include the JavaScript file -->
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-{% include "footer.html" %}
+<!-- Month header / nav -->
+<h2 class="cal-title">{{ month }} {{ year }}</h2>
+
+<nav class="month-nav">
+  <a href="{{ url_for('track', year=prev_year, month=prev_month) }}">← Prev</a>
+  <span class="divider">|</span>
+  <a href="{{ url_for('track', year=next_year, month=next_month) }}">Next →</a>
+</nav>
+
+<!-- Optional compact month list -->
+<nav class="month-nav months">
+  {% for mname, mnum in month_numbers.items() %}
+  <a
+    href="{{ url_for('track', year=year, month=mnum) }}"
+    class="{% if mnum == month_num %}active{% endif %}"
+  >
+    {{ mname }}
+  </a>
+  {% endfor %}
+</nav>
+
+<!-- Weekday header -->
+<ul class="calendar-grid weekday-row" aria-hidden="true">
+  <li>M</li>
+  <li>T</li>
+  <li>W</li>
+  <li>T</li>
+  <li>F</li>
+  <li>S</li>
+  <li>S</li>
+</ul>
+
+<!-- 6-row (42 cells) calendar -->
+<ul class="calendar-grid">
+  {# Leading blanks #} {% for _ in range(leading_blanks) %}
+  <li class="calendar-box empty" aria-hidden="true"></li>
+  {% endfor %} {# Real days #} {% for day in range(1, num_days + 1) %} {% set
+  date_str = "{:04d}-{:02d}-{:02d}".format(year, month_num, day) %}
+  <li class="calendar-box" data-date="{{ date_str }}">
+    <span class="day-number">{{ day }}</span>
+    <div class="day-icons">
+      {% for icon in icons_by_date.get(date_str, []) %}
+      <img
+        src="{{ url_for('static', filename='icons/' ~ icon) }}"
+        alt=""
+        class="day-icon"
+      />
+      {% endfor %}
+    </div>
+  </li>
+  {% endfor %} {# Trailing blanks #} {% for _ in range(trailing_blanks) %}
+  <li class="calendar-box empty" aria-hidden="true"></li>
+  {% endfor %}
+</ul>
+{% endblock %} {% block body_end %} {# Move scripts here so they load after the
+HTML. Keep main.js/page JS separate if you like. #}
+
+<script>
+  // Auto-dismiss flash messages after ~2s (if you're using Bootstrap classes)
+  setTimeout(() => {
+    document.querySelectorAll('.alert').forEach((el) => {
+      el.classList.remove('show');
+      el.classList.add('fade');
+      setTimeout(() => el.remove(), 500);
+    });
+  }, 2000);
+</script>
+
+<script>
+  // logs passed from the view; ensure you render with `logs` or change name accordingly
+  const loggedDays = {{ logs|tojson }};
+  console.log('loggedDays', loggedDays);
+</script>
+
+<script
+  src="{{ url_for('static', filename='script.js', v=asset_version) }}"
+  defer
+></script>
+{% endblock %}
