@@ -249,9 +249,6 @@ button:hover {
   cursor: pointer;
 }
 
-.submit_button {
-  margin-top: 10px;
-}
 .all_buttons {
   display: flex;
   justify-content: center;
@@ -301,12 +298,12 @@ input {
 /* Tracking  */
 
 .tracking-page {
-  margin-top: 15%;
+  margin-top: 10%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  padding: 20px;
+  padding: 50px;
 }
 
 .tracking-container {
@@ -316,12 +313,26 @@ input {
   justify-content: center;
 }
 
+.tracking-existing-activities {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tracking-container li {
+  list-style: none;
+  margin-bottom: 10px;
+}
+
 .month-nav {
   display: flex;
   justify-content: center;
-  align-items: left;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  flex-direction: row;
+  padding-left: 40px;
+  padding-right: 40px;
 }
 
 /* Container that holds all day boxes */
@@ -415,9 +426,6 @@ input {
 }
 
 /* Icons */
-.form_field {
-  margin: 10px 0;
-}
 
 .errors {
   color: #b00020;
@@ -427,11 +435,9 @@ input {
 
 /* Icon picker styles */
 .new-activity-container {
-  margin-top: 5%;
-  max-width: 900px;
   display: flex;
-  margin: 0 auto;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 .icon-picker {
@@ -439,8 +445,9 @@ input {
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
+  max-width: 800px;
+  padding: 40px;
   gap: 12px;
-  margin: 12px 0;
 }
 
 .icon-option {
@@ -480,7 +487,7 @@ input {
 }
 
 .submit_button {
-  margin-top: 16px;
+  margin-top: 5px;
 }
 
 /* Footer styling */

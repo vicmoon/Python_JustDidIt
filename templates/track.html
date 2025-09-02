@@ -3,28 +3,30 @@ Just Did It{% endblock %} {% block content %}
 <!-- Activities header -->
 <div class="tracking-page">
   <div class="tracking-container">
-    <div class="">
-      <a class="" href="{{ url_for('add_activity') }}">Add Activity</a>
-    </div>
+    <div class="tracking-existing-activities"> 
+      <div class="">
+        <a class="" href="{{ url_for('add_activity') }}">Add Activity</a>
+      </div>
 
-    {% if activities %}
-    <ul id="activityList" class="list-unstyled d-flex flex-wrap gap-3 mt-2">
-      {% for a in activities %}
-      <li class="activity-pill" data-id="{{ a.id }}" data-icon="{{ a.icon }}">
-        <img
-          src="{{ url_for('static', filename='icons/' ~ a.icon) }}"
-          alt=""
-          width="20"
-          height="20"
-          loading="lazy"
-        />
-        <span>{{ a.name }}</span>
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p class="text-muted mt-2">No activities yet.</p>
-    {% endif %}
+      {% if activities %}
+      <ul id="activityList" class="list-unstyled d-flex flex-wrap gap-3 mt-2">
+        {% for a in activities %}
+        <li class="activity-pill" data-id="{{ a.id }}" data-icon="{{ a.icon }}">
+          <img
+            src="{{ url_for('static', filename='icons/' ~ a.icon) }}"
+            alt=""
+            width="20"
+            height="20"
+            loading="lazy"
+          />
+          <span>{{ a.name }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-muted mt-2">No activities yet.</p>
+      {% endif %}
+  </div>
 
     <!-- Month header / nav -->
     <h2 class="cal-title">{{ month }} {{ year }}</h2>

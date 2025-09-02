@@ -1,6 +1,5 @@
-{# templates/add_activity.html #} {% extends "base.html" %} {% block title %} Add activity ·
+{# templates/add-activity.html #} {% extends "base.html" %} {% block title %} Add Activity ·
 Just Did It{% endblock %} {% block content %}
-    
 
     <div class="new-activity-container">
       
@@ -9,8 +8,10 @@ Just Did It{% endblock %} {% block content %}
 
         <!-- Name -->
         <div class="form_field">
-          {{ form.name.label }}<br />
+          <!-- {{ form.name.label }}<br /> -->
           {{ form.name(class="form-control") }}
+          {{ form.submit(class="btn btn-primary") }}
+         
         </div>
 
         <!-- Icon picker -->
@@ -31,11 +32,10 @@ Just Did It{% endblock %} {% block content %}
           </div>
         </div>
 
-        <div class="submit_button">
-          {{ form.submit(class="btn btn-primary") }}
-        </div>
+        
       </form>
     </div>
   </body>
 </html>
 {% endblock %}
+
