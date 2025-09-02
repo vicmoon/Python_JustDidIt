@@ -29,9 +29,9 @@ Just Did It{% endblock %} {% block content %}
   </div>
 
     <!-- Month header / nav -->
-    <h2 class="cal-title">{{ month }} {{ year }}</h2>
+   
 
-    <nav class="mointro-a">
+    <nav class="prev-next-nav">
       <a href="{{ url_for('track', year=prev_year, month=prev_month) }}"
         >← Prev</a
       >
@@ -42,6 +42,7 @@ Just Did It{% endblock %} {% block content %}
     </nav>
 
     <!-- Optional compact month list -->
+     
     <nav class="month-nav months">
       {% for mname, mnum in month_numbers.items() %}
       <a
@@ -55,6 +56,7 @@ Just Did It{% endblock %} {% block content %}
     </div>
 
     <div class="calendar-wrapper">
+      <h2 class="cal-title">{{ month }} {{ year }}</h2>
       <!-- Weekday header -->
       <ul class="calendar-grid weekday-row" aria-hidden="true">
         <li>M</li>

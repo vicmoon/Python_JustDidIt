@@ -326,6 +326,10 @@ input {
   margin-bottom: 10px;
 }
 
+.prev-next-nav {
+  margin-bottom: 30px;
+}
+
 .month-nav {
   display: flex;
   justify-content: center;
@@ -349,10 +353,9 @@ input {
 /* Nav */
 .month-nav {
   margin: 8px 0 12px;
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
 }
 .month-nav a {
   padding: 4px 10px;
@@ -371,7 +374,7 @@ input {
   opacity: 0.5;
 }
 
-/* Grid */
+/* Calendar Grid */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 60px); /* 7 columns */
