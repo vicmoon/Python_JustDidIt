@@ -203,6 +203,11 @@ def log_activity_day():
 def track():
     activities = Activity.query.filter_by(user_id=current_user.id).all()
     logs = ActivityLog.query.filter_by(user_id=current_user.id).all()
+    logged_map = {}
+    for l in logs:
+        logged_map[(l.activity_id, l.date)] = True
+        
+   
 
     today = dt.date.today()
     year = request.args.get("year", type=int, default=today.year)
@@ -238,7 +243,7 @@ def track():
     logs_json = json.dumps(log_data)
 
     return render_template(
-        "tracking.html",
+        "track.html",
         year=year,
         month=month_name,
         month_num=month_num,

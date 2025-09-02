@@ -34,22 +34,21 @@ ICON_CHOICES = [
 
 
 class ActivityForm(FlaskForm):
-    name = StringField("Activity", validators=[DataRequired()])
+    name = StringField("Activity", validators=[DataRequired()], render_kw={"placeholder": "Activity Name"})
     icon = RadioField("Icon", choices=ICON_CHOICES, validators=[DataRequired()])
     submit = SubmitField("Do It!")
 
 class RegisterForm(FlaskForm):
 
-    name= StringField('Name', validators=[DataRequired()])
-    email =  StringField('Email', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, message="Password must be at least 6 characters long.")])
+    name= StringField('Name', validators=[DataRequired()],render_kw={"placeholder": "Name"})
+    email =  StringField('Email', validators=[DataRequired()], render_kw={"placeholder": "Email"})
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, message="Password must be at least 6 characters long.")],render_kw={"placeholder": "Password"})
     submit = SubmitField('Register')
 
 
-
 class LoginForm(FlaskForm):
-    email =  StringField('Email', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, message="Password must be at least 6 characters long.")])
+    email =  StringField('Email', validators=[DataRequired()], render_kw={"placeholder": "Email"} )
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, message="Password must be at least 6 characters long.")],render_kw={"placeholder": "Password"})
     submit = SubmitField('Log in')
 
 

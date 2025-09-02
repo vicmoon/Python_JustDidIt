@@ -1,8 +1,9 @@
 {# templates/add_activity.html #} {% extends "base.html" %} {% block title %} Add activity ·
 Just Did It{% endblock %} {% block content %}
-    <h1>What do you want to get good at?</h1>
+    
 
     <div class="new-activity-container">
+      
       <form method="POST" action="{{ url_for('add_activity') }}">
         {{ form.hidden_tag() }}
 
