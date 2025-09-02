@@ -9,7 +9,7 @@ Just Did It{% endblock %} {% block content %}
       </div>
 
       {% if activities %}
-      <ul id="activityList" class="list-unstyled d-flex flex-wrap gap-3 mt-2">
+      <ul id="activityList" class="chosen-activity-list">
         {% for a in activities %}
         <li class="activity-pill" data-id="{{ a.id }}" data-icon="{{ a.icon }}">
           <img
