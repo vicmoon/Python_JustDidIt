@@ -1,98 +1,79 @@
-// Global variables to store the currently selected color and activity ID.
-let selectedColor = null;
-let selectedActivityId = null;
+<script>
+let activeActivityId = null;
+let activeActivityIcon = null;
 
-// Add click event listeners to each activity item.
-document.querySelectorAll('.activity-item').forEach((item) => {
-  item.addEventListener('click', () => {
-    const colorPicker = item.querySelector('.activity-color-picker');
-    selectedColor = colorPicker.value;
-    // Save the selected activity id
-    selectedActivityId = item.dataset.activityId;
 
-    // Visually indicate selection.
-    document
-      .querySelectorAll('.activity-item')
-      .forEach((i) => i.classList.remove('selected'));
-    item.classList.add('selected');
+{/* 1) Pick an activity from the pills */}
+document.querySelectorAll('#activityList .activity-pill').forEach(li => {
+  li.addEventListener('click', () => {
+    activeActivityId = li.dataset.id;
+    activeActivityIcon = li.dataset.icon;       // e.g. "book.png"
+
+    // visual state
+    document.querySelectorAll('#activityList .activity-pill')
+      .forEach(x => x.classList.remove('selected'));
+    li.classList.add('selected');
   });
+});
 
-  // Update the data attribute and selectedColor if the color picker changes.
-  item
-    .querySelector('.activity-color-picker')
-    .addEventListener('change', (e) => {
-      const newColor = e.target.value;
-      item.dataset.activityColor = newColor;
-      if (item.classList.contains('selected')) {
-        selectedColor = newColor;
-      }
+// helper: add/remove icon in a day cell
+function addIcon(box, activityId, iconFile) {
+  const wrap = box.querySelector('.day-icons');
+  if (!wrap) return;
 
-      fetch(`/update_activity_color/${item.dataset.activityId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ activity_color: newColor }),
-      })
-        .then((response) => response.text())
-        .then((data) => {
-          console.log('Color updated successfully:', data);
+  // avoid duplicate for same activity
+  const existing = wrap.querySelector(`img[data-activity-id="${activityId}"]`);
+  if (existing) existing.remove();
 
-          item.style.backgroundColor = newColor;
-          item.style.borderColor = newColor;
-        })
-        .catch((error) => {
-          console.error('Error updating the color', error);
-        });
+  const img = document.createElement('img');
+  img.className = 'day-icon';
+  img.alt = '';
+  img.dataset.activityId = activityId;
+  img.src = "{{ url_for('static', filename='icons/') }}" + iconFile;
+  wrap.appendChild(img);
+}
+
+function removeIcon(box, activityId) {
+  const wrap = box.querySelector('.day-icons');
+  if (!wrap) return;
+  const existing = wrap.querySelector(`img[data-activity-id="${activityId}"]`);
+  if (existing) existing.remove();
+}
+
+// 2) Click a calendar cell to toggle a log
+document.querySelectorAll('.calendar-box[data-date]').forEach(box => {
+  box.addEventListener('click', async () => {
+    if (!activeActivityId || !activeActivityIcon) {
+      alert('Pick an activity first.');
+      return;
+    }
+    const dateIso = box.dataset.date;
+
+    // POST to your endpoint; JSON is easiest (you can keep x-www-form-urlencoded if you prefer)
+    const res = await fetch("{{ url_for('log_activity_day') }}", {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, // add CSRF header if you use it
+      body: JSON.stringify({ activity_id: Number(activeActivityId), date: dateIso })
     });
-});
 
-// When a calendar box is clicked, mark it with the selected color.
-document.querySelectorAll('.calendar-box').forEach((box) => {
-  box.addEventListener('click', () => {
-    if (selectedColor && selectedActivityId) {
-      box.style.backgroundColor = selectedColor;
+    // Expect JSON: { ok: true, state: "added"|"removed", icon: "file.png" }
+    const data = await res.json();
+    if (!data.ok) { console.error(data); return; }
 
-      // Infer the date from the box and surrounding month/year
-      const day = box.innerText;
-      const monthName = box.closest('ul').previousElementSibling.innerText;
-      const month = new Date(`${monthName} 1, 2000`).getMonth() + 1; // Convert name to month index
-      const year = new Date().getFullYear(); // You can improve this if you show other years
-
-      const formattedDate = `${year}-${month
-        .toString()
-        .padStart(2, '0')}-${day.padStart(2, '0')}`;
-
-      fetch('/log_activity_day', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          activity_id: selectedActivityId,
-          date: formattedDate,
-        }),
-      })
-        .then((res) => res.text())
-        .then((data) => {
-          console.log(data); // Optional
-        })
-        .catch((error) => console.error('Error logging activity day:', error));
-    } else {
-      alert('Please select an activity first.');
+    if (data.state === 'added') {
+      addIcon(box, activeActivityId, data.icon || activeActivityIcon);
+    } else if (data.state === 'removed') {
+      removeIcon(box, activeActivityId);
     }
   });
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (!loggedDays || !Array.isArray(loggedDays)) return;
-
-  loggedDays.forEach((log) => {
-    const date = log.date;
-    const activityId = log.activity_id;
-    const color = log.activity?.color || '#ccc'; // fallback color
-
-    // Find matching calendar box
-    const box = document.querySelector(`.calendar-box[data-date="${date}"]`);
-    if (box) {
-      box.style.backgroundColor = color;
-      box.classList.add(`activity-${activityId}`);
-    }
+// Optional: paint from `loggedDays` if you prefer client-side initial render
+// loggedDays = [{date:"YYYY-MM-DD", activity_id:1, icon:"book.png"}, ...]
+if (Array.isArray(window.loggedDays)) {
+  window.loggedDays.forEach(log => {
+    const box = document.querySelector(`.calendar-box[data-date="${log.date}"]`);
+    if (box) addIcon(box, log.activity_id, log.icon);
   });
-});
+}
+</script>

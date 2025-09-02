@@ -4,8 +4,8 @@ Just Did It{% endblock %} {% block content %}
 <div class="tracking-page">
   <div class="tracking-container">
     <div class="tracking-existing-activities"> 
-      <div class="">
-        <a class="" href="{{ url_for('add_activity') }}">Add Activity</a>
+      <div>
+        <a href="{{ url_for('add_activity') }}">Add Activity</a>
       </div>
 
       {% if activities %}
@@ -76,15 +76,18 @@ Just Did It{% endblock %} {% block content %}
         set date_str = "{:04d}-{:02d}-{:02d}".format(year, month_num, day) %}
         <li class="calendar-box" data-date="{{ date_str }}">
           <span class="day-number">{{ day }}</span>
-          <div class="day-icons">
-            {% for icon in icons_by_date.get(date_str, []) %}
-            <img
-              src="{{ url_for('static', filename='icons/' ~ icon) }}"
-              alt=""
-              class="day-icon"
-            />
-            {% endfor %}
-          </div>
+
+       <div class="day-icons">
+  {% for it in icons_by_date.get(date_str, []) %}
+    <img
+      src="{{ url_for('static', filename='icons/' ~ it.icon) }}"
+      alt=""
+      class="day-icon"
+      data-activity-id="{{ it.activity_id }}"
+    />
+  {% endfor %}
+</div>
+
         </li>
         {% endfor %} {# Trailing blanks #} {% for _ in range(trailing_blanks) %}
         <li class="calendar-box empty" aria-hidden="true"></li>
