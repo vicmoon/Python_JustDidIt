@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, session
+from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify
 import datetime as dt
 import calendar
 from flask_bootstrap import Bootstrap
@@ -183,31 +183,58 @@ def add_activity():
 @app.route("/log_activity_day", methods=["POST"])
 @login_required
 def log_activity_day():
-    activity_id = request.form.get("activity_id")
-    date_str = request.form.get("date")
-    date = dt.datetime.strptime(date_str, "%Y-%m-%d").date()
+    data = request.get_json()
+    try:
+        activity_id = int(data.get('activity_id'))
+        date_str = dt.date.fromisoformat(data.get('date'))
+    except Exception as e:
+        return jsonify({"error": "Invalid data format"}), 400
+    
 
-    existing = ActivityLog.query.filter_by(
-        activity_id=activity_id, date=date, user_id=current_user.id
-    ).first()
+    #check that the user owns the activity 
 
-    if not existing:
-        db.session.add(ActivityLog(activity_id=activity_id, date=date, user_id=current_user.id))
+    activity = Activity.query.filter_by(id=activity_id, user_id=current_user.id).first()
+    if not activity:
+        return jsonify({"error": "Activity not found or unauthorized"}), 404
+    
+
+    existing = ActivityLog.query.filter_by(activity_id=activity_id, date=date_str, user_id=current_user.id).first()
+    
+    if existing:
+        db.session.delete(existing)
         db.session.commit()
+        return jsonify({"message": "Log entry removed"}), 200   
+    else:
+        new_log = ActivityLog(activity_id=activity_id, date=date_str, user_id=current_user.id)
+        db.session.add(new_log)
+        db.session.commit()
+        return jsonify({"message": "Log entry added"}), 201 
 
-    return "Logged", 200
-
+    
 
 @app.route('/track')
 @login_required
 def track():
     activities = Activity.query.filter_by(user_id=current_user.id).all()
     logs = ActivityLog.query.filter_by(user_id=current_user.id).all()
-    logged_map = {}
-    for l in logs:
-        logged_map[(l.activity_id, l.date)] = True
-        
-   
+
+    # for server-side icons
+    icons_by_date = {}
+    for log in logs:
+        icons_by_date.setdefault(log.date.isoformat(), []).append(log.activity.icon)
+
+    # for client-side JS
+    logs_json = [
+        {
+            "date": log.date.isoformat(),
+            "activity_id": log.activity_id,
+            "icon": log.activity.icon
+        }
+        for log in logs
+    ]
+
+
+
 
     today = dt.date.today()
     year = request.args.get("year", type=int, default=today.year)
@@ -228,19 +255,6 @@ def track():
     next_month = 1 if month_num == 12 else month_num + 1
     next_year = year + 1 if month_num == 12 else year
 
-    # Logs with icons
-    log_data = [{
-        "activity_id": log.activity_id,
-        "date": log.date.isoformat(),
-        "icon": log.activity.icon
-    } for log in logs]
-
-    icons_by_date = defaultdict(list)
-    for item in log_data:
-        if item.get("icon"):
-            icons_by_date[item["date"]].append(item["icon"])
-
-    logs_json = json.dumps(log_data)
 
     return render_template(
         "track.html",
@@ -254,7 +268,7 @@ def track():
         month_numbers=month_numbers,
         activities=activities,
         icons_by_date=icons_by_date,
-        logs_json=logs_json,
+        logs=logs_json,
         prev_month=prev_month, prev_year=prev_year,
         next_month=next_month, next_year=next_year
     )

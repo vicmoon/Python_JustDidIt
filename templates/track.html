@@ -78,14 +78,14 @@ Just Did It{% endblock %} {% block content %}
           <span class="day-number">{{ day }}</span>
 
        <div class="day-icons">
-  {% for it in icons_by_date.get(date_str, []) %}
-    <img
-      src="{{ url_for('static', filename='icons/' ~ it.icon) }}"
-      alt=""
-      class="day-icon"
-      data-activity-id="{{ it.activity_id }}"
-    />
-  {% endfor %}
+        {% for it in icons_by_date.get(date_str, []) %}
+          <img
+            src="{{ url_for('static', filename='icons/' ~ it.icon) }}"
+            alt=""
+            class="day-icon"
+            data-activity-id="{{ it.activity_id }}"
+          />
+        {% endfor %}
 </div>
 
         </li>
@@ -109,15 +109,13 @@ Just Did It{% endblock %} {% block content %}
     }, 2000);
   </script>
 
-  <script>
-    // logs passed from the view; ensure you render with `logs` or change name accordingly
-    const loggedDays = {{ logs|tojson }};
-    console.log('loggedDays', loggedDays);
-  </script>
+<script>
+  const loggedDays = {{ logs|tojson }};
+</script>
 
-  <script
-    src="{{ url_for('static', filename='script.js', v=asset_version) }}"
-    defer
-  ></script>
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+{% endblock %}
   {% endblock %}
 </div>

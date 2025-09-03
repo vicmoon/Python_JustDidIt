@@ -420,6 +420,17 @@ input {
   cursor: default;
 }
 
+.calendar-box.is-selected {
+  outline: 2px solid #1e2a78;
+  border-radius: 6px;
+}
+
+.activity-pill.is-selected {
+  outline: 2px solid #1e2a78;
+  border-radius: 999px;
+  padding: 5px;
+}
+
 /* Crossed (completed) */
 .crossed::before,
 .crossed::after {
