@@ -188,14 +188,14 @@ def log_activity_day():
         activity_id = int(data.get('activity_id'))
         date_str = dt.date.fromisoformat(data.get('date'))
     except Exception as e:
-        return jsonify({"error": "Invalid data format"}), 400
+        return jsonify(ok=False, error="Bad payload"), 400
     
 
     #check that the user owns the activity 
 
     activity = Activity.query.filter_by(id=activity_id, user_id=current_user.id).first()
     if not activity:
-        return jsonify({"error": "Activity not found or unauthorized"}), 404
+        return jsonify(ok=False, error="Not your activity"), 403
     
 
     existing = ActivityLog.query.filter_by(activity_id=activity_id, date=date_str, user_id=current_user.id).first()
@@ -216,8 +216,25 @@ def log_activity_day():
 @app.route('/track')
 @login_required
 def track():
+
+    today = dt.date.today()
+    year = request.args.get("year", type=int, default=today.year)
+    month_num = request.args.get("month", type=int, default=today.month)
+
+    first_weekday, num_days = calendar.monthrange(year, month_num)
+    start = dt.date(year, month_num, 1)
+    end = dt.date(year + (month_num == 12), (month_num % 12) + 1, 1)  # first day next month
+
+    
     activities = Activity.query.filter_by(user_id=current_user.id).all()
-    logs = ActivityLog.query.filter_by(user_id=current_user.id).all()
+    logs = (
+        ActivityLog.query
+        .filter(
+            ActivityLog.user_id == current_user.id,
+            ActivityLog.date >= start,
+            ActivityLog.date < end
+        ).all()
+    )
 
     # for server-side icons
     icons_by_date = {}
@@ -238,13 +255,6 @@ def track():
     ]
 
 
-
-
-    today = dt.date.today()
-    year = request.args.get("year", type=int, default=today.year)
-    month_num = request.args.get("month", type=int, default=today.month)
-
-    first_weekday, num_days = calendar.monthrange(year, month_num)
 
     TOTAL = 42
     leading_blanks = first_weekday

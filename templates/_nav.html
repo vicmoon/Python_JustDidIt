@@ -1,24 +1,26 @@
 <nav class="navbar">
-  <div class="logo">
-    <a href="{{ url_for('home') }}">
-      <img
-        src="{{ url_for('static', filename='logo.png')
+  <div class="nav-container">
+    <div class="logo">
+      <a href="{{ url_for('home') }}">
+        <img
+          src="{{ url_for('static', filename='logo.png')
           }}"
-        alt="Just Did It"
-      />
-    </a>
-  </div>
-  <div class="nav-links">
-    {% if current_user.is_authenticated %}
-    <a href="{{ url_for('home') }}">Home</a>
-    <a href="{{ url_for('track') }}">Track</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
+          alt="Just Did It"
+        />
+      </a>
+    </div>
+    <div class="nav-links">
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('track') }}">Track</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
 
-    {% else %}
-    <a href="{{ url_for('home') }}">Home</a>
+      {% else %}
+      <a href="{{ url_for('home') }}">Home</a>
 
-    <a href="{{ url_for('login') }}">Login</a>
-    <a href="{{ url_for('register') }}">Register</a>
-    {% endif %}
+      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('register') }}">Register</a>
+      {% endif %}
+    </div>
   </div>
 </nav>

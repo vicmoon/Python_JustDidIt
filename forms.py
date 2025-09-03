@@ -4,9 +4,10 @@ from wtforms.validators import DataRequired, URL, Length
 from flask_ckeditor import CKEditorField
 
 ICON_CHOICES = [
-    ("balloon.png", "🎈 Balloon"),
+    ("balloons.png", "🎈 Balloons"),
     ("bike.png", "🚲 Bike"),
     ("book.png", "📖 Book"),
+    ("brain.png", "🧠 Brain"),
     ("briefcase.png", "💼 Briefcase"),
     ("calculator.png", "🧮 Calculator"),
     ("camera.png", "📷 Camera"),
@@ -30,6 +31,19 @@ ICON_CHOICES = [
     ("sports.png", "🏀 Sports"),
     ("travel.png", "✈️ Travel"),
     ("weather.png", "☀️ Weather"),
+    ("sailboat.png", "⛵ Sailboat"),
+    ("car.png", "🚗 Car"),
+    ("hot-air-balloon.png", "🎈 Hot Air Balloon"),
+    ("fishing.png", "🎣 Fishing"),
+    ("drum.png", "🥁 Drum"),
+    ("magic-ball.png", "🔮 Magic Ball"),
+    ("weightlifter.png", "🏋️ Weightlifter"),
+    ("run.png", "🏃 Run"),
+    ("hiking.png", "🥾 Hiking"),
+    ("camping.png", "🏕 Camping"),
+    ("yoga.png", "🧘 Yoga"),
+    ("exercise.png", "🤸 Exercise"),
+    ("sport.png", "⚽ Sport"),
 ]
 
 
