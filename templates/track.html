@@ -109,12 +109,15 @@ Just Did It{% endblock %} {% block content %}
     }, 2000);
   </script>
 
-<script>
-  const loggedDays = {{ logs|tojson }};
-</script>
+// <script>
+//   const loggedDays = {{ logs|tojson }};
+// </script>
 
 
 {% block scripts %}
+<script>
+    window.ICON_BASE = "{{ url_for('static', filename='icons/') }}";
+  </script>
   <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 {% endblock %}
   {% endblock %}

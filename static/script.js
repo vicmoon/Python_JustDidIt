@@ -1,64 +1,109 @@
-//console.log('tracking script loaded');
+console.log('tracking script loaded');
+
+const ICON_BASE = window.ICON_BASE || '/static/icons/';
 
 let activeActivityId = null;
 let activeActivityIcon = null;
 
 const activityList = document.querySelector('#activityList');
+
+function clearSelection() {
+  activeActivityId = null;
+  activeActivityIcon = null;
+  if (activityList) {
+    activityList
+      .querySelectorAll('.activity-pill')
+      .forEach((p) => p.classList.remove('is-selected'));
+  }
+}
+
 if (activityList) {
   activityList.addEventListener('click', (e) => {
     const pill = e.target.closest('.activity-pill');
     if (!pill) return;
 
-    //store the selection
+    const wasSelected = pill.classList.contains('is-selected');
 
-    activeActivityId = pill.dataset.id;
-    activeActivityIcon = pill.dataset.icon;
-
-    console.log('Selected activity:', activeActivityId, activeActivityIcon);
-
-    // Update UI to reflect selection
-
+    // clear all first
     activityList
       .querySelectorAll('.activity-pill')
       .forEach((p) => p.classList.remove('is-selected'));
-    pill.classList.add('is-selected');
-  });
-}
 
-const calendarBoxes = document.querySelectorAll('.calendar-box[data-date]');
-//console.log('found boxes:', calendarBoxes.length);
-
-calendarBoxes.forEach((box) => {
-  box.addEventListener('click', () => {
-    const dateIso = box.dataset.date;
-
-    if (!activeActivityId) {
-      alert('Select an activity first :)');
+    if (wasSelected) {
+      // clicking the same pill -> deselect
+      clearSelection();
       return;
     }
 
-    // Send data to server
+    // select new pill
+    pill.classList.add('is-selected');
+    activeActivityId = pill.dataset.id; // or Number(pill.dataset.id)
+    activeActivityIcon = pill.dataset.icon; // e.g., "book.png"
+    console.log('Selected activity:', activeActivityId, activeActivityIcon);
+  });
+}
 
-    fetch('/log_activity_day', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        date: dateIso,
-        activity_id: Number(activeActivityId),
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Server response:', data);
-      })
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') clearSelection();
+});
 
-      .catch((err) => console.error('Error logging activity:', err));
+/* --- helpers unchanged --- */
+function addIconToBox(box, activityId, iconFile) {
+  const wrap = box.querySelector('.day-icons');
+  if (!wrap) return;
+  const existing = wrap.querySelector(`img[data-activity-id="${activityId}"]`);
+  if (existing) existing.remove();
+  const img = document.createElement('img');
+  img.className = 'day-icon';
+  img.dataset.activityId = activityId;
+  img.alt = 'icon';
+  img.src = ICON_BASE + iconFile;
+  wrap.appendChild(img);
+}
 
-    // console.log('Log pair →', {
-    //   date: dateIso,
-    //   activity_id: Number(activeActivityId),
-    // });
+function removeIconFromBox(box, activityId) {
+  const wrap = box.querySelector('.day-icons');
+  const existing =
+    wrap && wrap.querySelector(`img[data-activity-id="${activityId}"]`);
+  if (existing) existing.remove();
+}
 
-    box.classList.toggle('is-selected');
+/* --- calendar click handler unchanged --- */
+document.querySelectorAll('.calendar-box[data-date]').forEach((box) => {
+  box.addEventListener('click', async () => {
+    if (!activeActivityId || !activeActivityIcon) {
+      alert('Select an activity first 🙂');
+      return;
+    }
+    const dateIso = box.dataset.date;
+
+    try {
+      const res = await fetch('/log_activity_day', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: dateIso,
+          activity_id: Number(activeActivityId),
+        }),
+      });
+      const data = await res.json();
+
+      if (!data.ok) {
+        console.error('Error logging activity:', data.error || data);
+        return;
+      }
+      if (data.state === 'added') {
+        addIconToBox(
+          box,
+          data.activity_id ?? activeActivityId,
+          data.icon ?? activeActivityIcon
+        );
+      } else if (data.state === 'removed') {
+        removeIconFromBox(box, data.activity_id ?? activeActivityId);
+      }
+      box.classList.toggle('is-selected'); // optional
+    } catch (err) {
+      console.error('Network/parse error:', err);
+    }
   });
 });

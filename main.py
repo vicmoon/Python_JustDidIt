@@ -203,12 +203,13 @@ def log_activity_day():
     if existing:
         db.session.delete(existing)
         db.session.commit()
-        return jsonify({"message": "Log entry removed"}), 200   
+        return jsonify(ok=True, state="removed", activity_id=activity_id)
+  
     else:
         new_log = ActivityLog(activity_id=activity_id, date=date_str, user_id=current_user.id)
         db.session.add(new_log)
         db.session.commit()
-        return jsonify({"message": "Log entry added"}), 201 
+        return jsonify(ok=True, state="added", activity_id=activity_id, icon=activity.icon)
 
     
 
@@ -221,7 +222,10 @@ def track():
     # for server-side icons
     icons_by_date = {}
     for log in logs:
-        icons_by_date.setdefault(log.date.isoformat(), []).append(log.activity.icon)
+        icons_by_date.setdefault(log.date.isoformat(), []).append({
+            "activity_id": log.activity_id,
+            "icon": log.activity.icon,
+})
 
     # for client-side JS
     logs_json = [
