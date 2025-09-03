@@ -4,7 +4,7 @@ import calendar
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, ForeignKey, Date
+from sqlalchemy import Integer, String, ForeignKey, Date, text
 from forms import ActivityForm, LoginForm, RegisterForm
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -39,6 +39,9 @@ class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False, unique=True)
     icon = db.Column(db.String(120), nullable=False)
+    # NEW: Iconify identifier like "mdi:run" or "tabler:book"
+
+    icon_ref = db.Column(db.String(100), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
@@ -166,10 +169,15 @@ def logout():
 @login_required
 def add_activity():
     form = ActivityForm()
+    icon_file = form.icon.data or None
+    icon_ref  = form.icon_ref.data or None
+
+
     if form.validate_on_submit():
         new_activity = Activity(
             name=form.name.data.strip(),
-            icon=form.icon.data,
+            icon=icon_file if not icon_ref else None,
+            icon_ref=icon_ref,
             user_id=current_user.id
         )
         db.session.add(new_activity)

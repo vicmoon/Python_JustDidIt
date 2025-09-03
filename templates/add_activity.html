@@ -30,6 +30,14 @@ Just Did It{% endblock %} {% block content %}
             </label>
             {% endfor %}
           </div>
+          <div class="form_field">
+              <label>Or search thousands of icons</label>
+              <input id="iconSearch" type="text" placeholder="Search (e.g., run, yoga)" />
+              <div id="iconResults" class="icon-grid"></div>
+
+              <!-- hidden field to store the chosen Iconify ref -->
+              <input type="hidden" name="{{ form.icon_ref.name }}" id="iconRef" />
+          </div>
         </div>
 
         
@@ -37,5 +45,9 @@ Just Did It{% endblock %} {% block content %}
     </div>
   </body>
 </html>
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='icons_script.js') }}" defer></script>
+{% endblock %}
 {% endblock %}
 

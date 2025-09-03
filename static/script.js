@@ -1,4 +1,4 @@
-console.log('tracking script loaded');
+//console.log('tracking script loaded');
 
 const ICON_BASE = window.ICON_BASE || '/static/icons/';
 

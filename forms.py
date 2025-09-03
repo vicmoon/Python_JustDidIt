@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, SelectField, RadioField
+from wtforms import StringField, SubmitField, PasswordField, SelectField, RadioField, ValidationError
 from wtforms.validators import DataRequired, URL, Length
 from flask_ckeditor import CKEditorField
 
@@ -44,13 +44,40 @@ ICON_CHOICES = [
     ("yoga.png", "🧘 Yoga"),
     ("exercise.png", "🤸 Exercise"),
     ("sport.png", "⚽ Sport"),
+    ("renewable-energy.png", "🌱 Renewable Energy"),
+    ("faucet.png", "🚰 Faucet"),
+    ("diamond.png", "💎 Diamond"),
+    ("bracelet.png", "📿 Bracelet"),
+    ("hearts.png", "❤️ Hearts"),
+    ("chef.png", "👨‍🍳 Chef"),
+    ("cutlery.png", "🍴 Cutlery"),
+    ("backpack.png", "🎒 Backpack"),
+    ("nature.png", "🌳 Nature"),
+    ("starfish.png", "⭐ Starfish"),
+    ("watermelon.png", "🍉 Watermelon"),
+
+
+
+    
+
+    
 ]
 
 
 class ActivityForm(FlaskForm):
     name = StringField("Activity", validators=[DataRequired()], render_kw={"placeholder": "Activity Name"})
     icon = RadioField("Icon", choices=ICON_CHOICES, validators=[DataRequired()])
+    icon_ref = StringField()    
     submit = SubmitField("Do It!")
+
+    # Ensure at least one is chosen
+    def validate(self, extra_validators=None):
+        ok = super().validate(extra_validators=extra_validators)
+        if not ok:
+            return False
+        if not (self.icon.data or self.icon_ref.data):
+            raise ValidationError("Please choose a local icon or pick one from search.")
+        return True
 
 class RegisterForm(FlaskForm):
 
