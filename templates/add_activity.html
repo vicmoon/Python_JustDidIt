@@ -2,7 +2,7 @@
 Activity · Just Did It{% endblock %} {% block content %} {% with messages =
 get_flashed_messages(with_categories=true) %} {% if messages %}
 <div class="error-messages">
-  "> {% for category, message in messages %}
+  {% for category, message in messages %}
   <div class="alert alert-{{ category }}">{{ message }}</div>
   {% endfor %}
 </div>
@@ -18,7 +18,7 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
 
     {# Iconify search lives INSIDE the form #}
     <div class="form_field">
-      <label for="iconSearch">Search thousands of icons</label>
+      <!-- <label for="iconSearch">Search thousands of icons</label> -->
       <input
         id="iconSearch"
         type="text"
@@ -32,7 +32,7 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
       {% endfor %}
     </div>
 
-    <div class="submit_button">{{ form.submit(class="btn btn-primary") }}</div>
+    <div class="submit_button">{{ form.submit() }}</div>
   </form>
 </div>
 {% endblock %} {% block scripts %}
@@ -40,4 +40,18 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
   src="{{ url_for('static', filename='icons_script.js') }}"
   defer
 ></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // adjust selector to match your flash markup
+    document.querySelectorAll('.alert, .flash').forEach((el) => {
+      setTimeout(() => {
+        el.style.transition = 'opacity 300ms';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 320);
+      }, 2000);
+    });
+  });
+</script>
+
 {% endblock %}

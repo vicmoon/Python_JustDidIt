@@ -1,42 +1,28 @@
 {# templates/tracking.html #} {% extends "base.html" %} {% block title %}Track ·
 Just Did It{% endblock %} {% block content %}
-<!-- Activities header -->
 <div class="tracking-page">
   <div class="tracking-container">
-    <div class="tracking-existing-activities"> 
-      <div>
-        <a href="{{ url_for('add_activity') }}">Add Activity</a>
-      </div>
+    <div class="tracking-existing-activities">
+      <div><a href="{{ url_for('add_activity') }}">Add Activity</a></div>
 
       {% if activities %}
       <ul id="activityList" class="chosen-activity-list">
-  {% for a in activities %}
-  <li class="activity-pill"
-      data-id="{{ a.id }}"
-      data-icon="{{ a.icon if a.icon else a.icon_ref }}">
-      
-    {% if a.icon %}
-      <img src="{{ url_for('static', filename='icons/' ~ a.icon) }}"
-           width="20" height="20" loading="lazy">
-    {% elif a.icon_ref %}
-      {% set p = a.icon_ref.split(':')[0] %}
-      {% set n = a.icon_ref.split(':')[1] %}
-      <img src="https://api.iconify.design/{{ p }}/{{ n }}.svg"
-           width="20" height="20" loading="lazy">
-    {% endif %}
-
-    <span>{{ a.name }}</span>
-  </li>
-  {% endfor %}
-</ul>
-
+        {% for a in activities %} {% set v = a.icon_ref or a.icon %}
+        <li class="activity-pill" data-id="{{ a.id }}" data-icon="{{ v }}">
+          <img
+            src="{{ ('https://api.iconify.design/' ~ v|replace(':','/') ~ '.svg') if (':' in v) else url_for('static', filename='icons/' ~ v) }}"
+            width="20"
+            height="20"
+            loading="lazy"
+          />
+          <span>{{ a.name }}</span>
+        </li>
+        {% endfor %}
+      </ul>
       {% else %}
       <p class="text-muted mt-2">No activities yet.</p>
       {% endif %}
-  </div>
-
-    <!-- Month header / nav -->
-   
+    </div>
 
     <nav class="prev-next-nav">
       <a href="{{ url_for('track', year=prev_year, month=prev_month) }}"
@@ -48,8 +34,6 @@ Just Did It{% endblock %} {% block content %}
       >
     </nav>
 
-    <!-- Optional compact month list -->
-     
     <nav class="month-nav months">
       {% for mname, mnum in month_numbers.items() %}
       <a
@@ -60,82 +44,50 @@ Just Did It{% endblock %} {% block content %}
       </a>
       {% endfor %}
     </nav>
-    </div>
-
-    <div class="calendar-wrapper">
-      <h2 class="cal-title">{{ month }} {{ year }}</h2>
-      <!-- Weekday header -->
-      <ul class="calendar-grid weekday-row" aria-hidden="true">
-        <li>M</li>
-        <li>T</li>
-        <li>W</li>
-        <li>T</li>
-        <li>F</li>
-        <li>S</li>
-        <li>S</li>
-      </ul>
-
-      <!-- 6-row (42 cells) calendar -->
-      <ul class="calendar-grid">
-        {# Leading blanks #} {% for _ in range(leading_blanks) %}
-        <li class="calendar-box empty" aria-hidden="true"></li>
-        {% endfor %} {# Real days #} {% for day in range(1, num_days + 1) %} {%
-        set date_str = "{:04d}-{:02d}-{:02d}".format(year, month_num, day) %}
-        <li class="calendar-box" data-date="{{ date_str }}">
-          <span class="day-number">{{ day }}</span>
-
-   <div class="day-icons">
-  {% for it in icons_by_date.get(date_str, []) %}
-    {% if it.icon %}
-      <img
-        src="{{ url_for('static', filename='icons/' ~ it.icon) }}"
-        alt=""
-        class="day-icon"
-        data-activity-id="{{ it.activity_id }}"
-        loading="lazy"
-      />
-    {% elif it.icon_ref %}
-      <img
-        src="https://api.iconify.design/{{ it.icon_ref|replace(':','/') }}.svg"
-        alt=""
-        class="day-icon"
-        data-activity-id="{{ it.activity_id }}"
-        loading="lazy"
-      />
-    {% endif %}
-  {% endfor %}
-</div>
-
-
-
-        </li>
-        {% endfor %} {# Trailing blanks #} {% for _ in range(trailing_blanks) %}
-        <li class="calendar-box empty" aria-hidden="true"></li>
-        {% endfor %}
-      </ul>
-    </div>
   </div>
-  {% endblock %} {% block body_end %} {# Move scripts here so they load after
-  the HTML. Keep main.js/page JS separate if you like. #}
 
-  <script>
-    // Auto-dismiss flash messages after ~2s (if you're using Bootstrap classes)
-    setTimeout(() => {
-      document.querySelectorAll('.alert').forEach((el) => {
-        el.classList.remove('show');
-        el.classList.add('fade');
-        setTimeout(() => el.remove(), 500);
-      });
-    }, 2000);
-  </script>
+  <div class="calendar-wrapper">
+    <h2 class="cal-title">{{ month }} {{ year }}</h2>
 
+    <ul class="calendar-grid weekday-row" aria-hidden="true">
+      <li>M</li>
+      <li>T</li>
+      <li>W</li>
+      <li>T</li>
+      <li>F</li>
+      <li>S</li>
+      <li>S</li>
+    </ul>
 
-
-{% block scripts %}
-<script>
-    window.ICON_BASE = "{{ url_for('static', filename='icons/') }}";
-  </script>
-  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
-{% endblock %}
-  {% endblock %}
+    <ul class="calendar-grid">
+      {# Leading blanks #} {% for _ in range(leading_blanks) %}
+      <li class="calendar-box empty" aria-hidden="true"></li>
+      {% endfor %} {# Real days #} {% for day in range(1, num_days + 1) %} {%
+      set date_str = "{:04d}-{:02d}-{:02d}".format(year, month_num, day) %}
+      <li class="calendar-box" data-date="{{ date_str }}">
+        <span class="day-number">{{ day }}</span>
+        <div class="day-icons">
+          {% for it in icons_by_date.get(date_str, []) %} {% set v = it.icon_ref
+          or it.icon %} {% if v %}
+          <img
+            src="{{ ('https://api.iconify.design/' ~ v|replace(':','/') ~ '.svg') if (':' in v) else url_for('static', filename='icons/' ~ v) }}"
+            alt=""
+            class="day-icon"
+            data-activity-id="{{ it.activity_id }}"
+            loading="lazy"
+          />
+          {% endif %} {% endfor %}
+        </div>
+      </li>
+      {% endfor %} {# Trailing blanks #} {% for _ in range(trailing_blanks) %}
+      <li class="calendar-box empty" aria-hidden="true"></li>
+      {% endfor %}
+    </ul>
+  </div>
 </div>
+{% endblock %} {% block scripts %}
+<script>
+  window.ICON_BASE = "{{ url_for('static', filename='icons/') }}";
+</script>
+<script src="{{ url_for('static', filename='script.js') }}" defer></script>
+{% endblock %}

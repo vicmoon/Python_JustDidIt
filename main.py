@@ -221,7 +221,7 @@ def log_activity_day():
         new_log = ActivityLog(activity_id=activity_id, date=date_str, user_id=current_user.id)
         db.session.add(new_log)
         db.session.commit()
-        return jsonify(ok=True, state="added", activity_id=activity_id, icon=activity.icon)
+        return jsonify(ok=True, state="added", activity_id=activity_id, icon=activity.icon or activity.icon_ref)
 
     
 
@@ -244,7 +244,7 @@ def track():
         .filter(
             ActivityLog.user_id == current_user.id,
             ActivityLog.date >= start,
-            ActivityLog.date < end
+            ActivityLog.date <= end
         ).all()
     )
 
@@ -254,6 +254,7 @@ def track():
         icons_by_date.setdefault(log.date.isoformat(), []).append({
             "activity_id": log.activity_id,
             "icon": log.activity.icon,
+            "icon_ref": log.activity.icon_ref,
 })
 
     # for client-side JS
@@ -265,8 +266,6 @@ def track():
         }
         for log in logs
     ]
-
-
 
     TOTAL = 42
     leading_blanks = first_weekday

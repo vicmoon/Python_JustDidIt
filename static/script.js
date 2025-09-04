@@ -47,17 +47,19 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') clearSelection();
 });
 
-/* --- helpers unchanged --- */
-function addIconToBox(box, activityId, iconFile) {
+/* --- helpers --- */
+function addIconToBox(box, activityId, iconRef) {
   const wrap = box.querySelector('.day-icons');
   if (!wrap) return;
+
   const existing = wrap.querySelector(`img[data-activity-id="${activityId}"]`);
   if (existing) existing.remove();
+
   const img = document.createElement('img');
   img.className = 'day-icon';
   img.dataset.activityId = activityId;
   img.alt = 'icon';
-  img.src = ICON_BASE + iconFile;
+  img.src = iconUrl(iconRef);
   wrap.appendChild(img);
 }
 
@@ -68,6 +70,14 @@ function removeIconFromBox(box, activityId) {
   if (existing) existing.remove();
 }
 
+function iconUrl(ref) {
+  if (!ref) return '';
+  return ref.includes(':')
+    ? `https://api.iconify.design/${ref.replace(':', '/')}.svg`
+    : ICON_BASE + ref;
+}
+
+/* --- icon picker --- */
 /* --- calendar click handler unchanged --- */
 document.querySelectorAll('.calendar-box[data-date]').forEach((box) => {
   box.addEventListener('click', async () => {

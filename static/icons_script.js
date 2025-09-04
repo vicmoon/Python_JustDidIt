@@ -46,11 +46,11 @@
         icons.forEach((id) => {
           const [prefix, name] = id.split(':');
           const btn = document.createElement('button');
-          btn.type = 'button';
+          btn.type = 'icon-button';
           btn.className = 'icon-choice';
           btn.innerHTML =
             `<img src="https://api.iconify.design/${prefix}/${name}.svg" ` +
-            `alt="${id}" width="36" height="36"><span>${id}</span>`;
+            `alt="${id}">`;
           btn.addEventListener('click', () => {
             iconRefHidden.value = id;
             [...iconResultsGrid.children].forEach((el) =>

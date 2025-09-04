@@ -242,13 +242,10 @@ section {
   gap: 10px;
 }
 
-button,
 .btn-primary {
   padding: 15px;
   background-color: #67c090;
   border-radius: 30px;
-  width: 100px;
-  margin-top: 25%;
 }
 button:hover {
   background-color: #fbf3d5;
@@ -479,6 +476,13 @@ input {
   transition: border-color 0.15s ease;
 }
 
+button.icon-choice {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
 .icon-option:hover {
   border-color: #ccc;
 }
@@ -504,21 +508,20 @@ input {
   border-radius: 8px;
 }
 .icon-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; /* 6 columns */
-  gap: 8px;
-  margin-top: 8px;
-}
-.icon-choice {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px;
+  max-width: 600px;
+  justify-content: space-around;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.icon-choice img {
+  gap: 20px;
+  padding: 10px;
   border: 1px solid #2a2a2a;
   border-radius: 10px;
-
   cursor: pointer;
+  width: 30px;
+  height: 30px;
 }
 .icon-choice.selected {
   outline: 2px solid #6cf;
@@ -545,6 +548,12 @@ input {
   object-fit: contain; /* keep aspect ratio */
   display: block;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.12));
+}
+
+.day-icons img.day-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
 }
 
 /* Optional: selected pill styling */
