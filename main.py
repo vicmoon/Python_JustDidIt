@@ -38,7 +38,7 @@ app.jinja_env.globals['current_year'] = dt.datetime.utcnow().year
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False, unique=True)
-    icon = db.Column(db.String(120), nullable=False)
+    icon = db.Column(db.String(120), nullable=True)
     # NEW: Iconify identifier like "mdi:run" or "tabler:book"
 
     icon_ref = db.Column(db.String(100), nullable=True)
@@ -178,12 +178,16 @@ def add_activity():
             name=form.name.data.strip(),
             icon=icon_file if not icon_ref else None,
             icon_ref=icon_ref,
-            user_id=current_user.id
+            user_id=current_user.id 
         )
         db.session.add(new_activity)
         db.session.commit()
         flash('Activity added!', "success")
         return redirect(url_for('track'))
+    
+
+    if request.method == "POST":
+        flash(f"Please fix {form.errors}", "danger")
 
     return render_template("add_activity.html", form=form)
 

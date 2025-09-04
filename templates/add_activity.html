@@ -1,53 +1,43 @@
-{# templates/add-activity.html #} {% extends "base.html" %} {% block title %} Add Activity ·
-Just Did It{% endblock %} {% block content %}
+{# templates/add_activity.html #} {% extends "base.html" %} {% block title %}Add
+Activity · Just Did It{% endblock %} {% block content %} {% with messages =
+get_flashed_messages(with_categories=true) %} {% if messages %}
+<div class="error-messages">
+  "> {% for category, message in messages %}
+  <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %} {% endwith %}
 
-    <div class="new-activity-container">
-      
-      <form method="POST" action="{{ url_for('add_activity') }}">
-        {{ form.hidden_tag() }}
+<div class="new-activity-container">
+  <form method="POST" action="{{ url_for('add_activity') }}">
+    {{ form.hidden_tag() }}
 
-        <!-- Name -->
-        <div class="form_field">
-          <!-- {{ form.name.label }}<br /> -->
-          {{ form.name(class="form-control") }}
-          {{ form.submit(class="btn btn-primary") }}
-         
-        </div>
-
-        <!-- Icon picker -->
-        <div class="form_field">
-          <!-- {{ form.icon.label }}<br /> -->
-          <div class="icon-picker">
-            {% for value, label in form.icon.choices %}
-            <label class="icon-option">
-              <input type="radio" name="{{ form.icon.name }}" value="{{ value
-              }}" {% if (form.icon.data or '') == value %}checked{% endif %} />
-              <img
-                src="{{ url_for('static', filename='icons/' ~ value) }}"
-                alt="{{ label }}"
-              />
-              <span>{{ label }}</span>
-            </label>
-            {% endfor %}
-          </div>
-          <div class="form_field">
-              <label>Or search thousands of icons</label>
-              <input id="iconSearch" type="text" placeholder="Search (e.g., run, yoga)" />
-              <div id="iconResults" class="icon-grid"></div>
-
-              <!-- hidden field to store the chosen Iconify ref -->
-              <input type="hidden" name="{{ form.icon_ref.name }}" id="iconRef" />
-          </div>
-        </div>
-
-        
-      </form>
+    <div class="form_field">
+      {{ form.name(class="form-control", placeholder="Activity name") }}
     </div>
-  </body>
-</html>
 
-{% block scripts %}
-  <script src="{{ url_for('static', filename='icons_script.js') }}" defer></script>
-{% endblock %}
-{% endblock %}
+    {# Iconify search lives INSIDE the form #}
+    <div class="form_field">
+      <label for="iconSearch">Search thousands of icons</label>
+      <input
+        id="iconSearch"
+        type="text"
+        autocomplete="off"
+        placeholder="Search (e.g., run, yoga)"
+      />
+      <div id="iconResults" class="icon-grid"></div>
+      <input type="hidden" id="iconRef" name="{{ form.icon_ref.name }}" />
+      {% for err in form.icon_ref.errors %}
+      <div class="error">{{ err }}</div>
+      {% endfor %}
+    </div>
 
+    <div class="submit_button">{{ form.submit(class="btn btn-primary") }}</div>
+  </form>
+</div>
+{% endblock %} {% block scripts %}
+<script
+  src="{{ url_for('static', filename='icons_script.js') }}"
+  defer
+></script>
+{% endblock %}

@@ -10,19 +10,26 @@ Just Did It{% endblock %} {% block content %}
 
       {% if activities %}
       <ul id="activityList" class="chosen-activity-list">
-        {% for a in activities %}
-        <li class="activity-pill" data-id="{{ a.id }}" data-icon="{{ a.icon }}">
-          <img
-            src="{{ url_for('static', filename='icons/' ~ a.icon) }}"
-            alt=""
-            width="20"
-            height="20"
-            loading="lazy"
-          />
-          <span>{{ a.name }}</span>
-        </li>
-        {% endfor %}
-      </ul>
+  {% for a in activities %}
+  <li class="activity-pill"
+      data-id="{{ a.id }}"
+      data-icon="{{ a.icon if a.icon else a.icon_ref }}">
+      
+    {% if a.icon %}
+      <img src="{{ url_for('static', filename='icons/' ~ a.icon) }}"
+           width="20" height="20" loading="lazy">
+    {% elif a.icon_ref %}
+      {% set p = a.icon_ref.split(':')[0] %}
+      {% set n = a.icon_ref.split(':')[1] %}
+      <img src="https://api.iconify.design/{{ p }}/{{ n }}.svg"
+           width="20" height="20" loading="lazy">
+    {% endif %}
+
+    <span>{{ a.name }}</span>
+  </li>
+  {% endfor %}
+</ul>
+
       {% else %}
       <p class="text-muted mt-2">No activities yet.</p>
       {% endif %}
@@ -77,16 +84,29 @@ Just Did It{% endblock %} {% block content %}
         <li class="calendar-box" data-date="{{ date_str }}">
           <span class="day-number">{{ day }}</span>
 
-       <div class="day-icons">
-        {% for it in icons_by_date.get(date_str, []) %}
-          <img
-            src="{{ url_for('static', filename='icons/' ~ it.icon) }}"
-            alt=""
-            class="day-icon"
-            data-activity-id="{{ it.activity_id }}"
-          />
-        {% endfor %}
+   <div class="day-icons">
+  {% for it in icons_by_date.get(date_str, []) %}
+    {% if it.icon %}
+      <img
+        src="{{ url_for('static', filename='icons/' ~ it.icon) }}"
+        alt=""
+        class="day-icon"
+        data-activity-id="{{ it.activity_id }}"
+        loading="lazy"
+      />
+    {% elif it.icon_ref %}
+      <img
+        src="https://api.iconify.design/{{ it.icon_ref|replace(':','/') }}.svg"
+        alt=""
+        class="day-icon"
+        data-activity-id="{{ it.activity_id }}"
+        loading="lazy"
+      />
+    {% endif %}
+  {% endfor %}
 </div>
+
+
 
         </li>
         {% endfor %} {# Trailing blanks #} {% for _ in range(trailing_blanks) %}

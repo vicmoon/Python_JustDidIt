@@ -1,59 +1,76 @@
-// Choose 1–3 popular collections for speed
-const collections = ['mdi', 'tabler', 'material-symbols'];
-const cache = {};
+// /static/icons_script.js
+(() => {
+  // Avoid double init
+  if (window.__ICONIFY_MIN_INIT__) return;
+  window.__ICONIFY_MIN_INIT__ = true;
 
-async function loadCollection(prefix) {
-  if (cache[prefix]) return cache[prefix];
-  const res = await fetch(`https://api.iconify.design/${prefix}.json`);
-  const data = await res.json();
-  const names = Object.keys(data.icons || {});
-  cache[prefix] = names;
-  return names;
-}
+  // Wait until DOM parsed (defer should be enough, this is extra-safe)
+  document.addEventListener('DOMContentLoaded', () => {
+    const iconSearchInput = document.getElementById('iconSearch');
+    const iconResultsGrid = document.getElementById('iconResults');
+    const iconRefHidden = document.getElementById('iconRef');
 
-async function searchIcons(q) {
-  const term = q.toLowerCase().trim();
-  if (!term) {
-    document.getElementById('iconResults').innerHTML = '';
-    return;
-  }
-
-  const results = [];
-  for (const p of collections) {
-    const names = await loadCollection(p);
-    for (const n of names) {
-      if (n.includes(term)) results.push({ prefix: p, name: n });
-      if (results.length >= 60) break;
+    if (!iconSearchInput || !iconResultsGrid || !iconRefHidden) {
+      console.warn('[iconify] required elements not found on page');
+      return;
     }
-    if (results.length >= 60) break;
-  }
-  render(results);
-}
 
-function render(list) {
-  const wrap = document.getElementById('iconResults');
-  wrap.innerHTML = '';
-  list.forEach(({ prefix, name }) => {
-    const url = `https://api.iconify.design/${prefix}/${name}.svg`;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'icon-choice';
-    btn.innerHTML = `<img src="${url}" alt="${name}"><span>${prefix}:${name}</span>`;
-    btn.onclick = () => {
-      // set hidden input
-      document.getElementById('iconRef').value = `${prefix}:${name}`;
-      // uncheck local radios so we prefer icon_ref
-      document
-        .querySelectorAll('input[name="{{ form.icon.name }}"]')
-        .forEach((r) => (r.checked = false));
+    const debounce = (fn, ms = 250) => {
+      let t;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn(...args), ms);
+      };
     };
-    wrap.appendChild(btn);
-  });
-}
 
-const searchBox = document.getElementById('iconSearch');
-let t;
-searchBox.addEventListener('input', (e) => {
-  clearTimeout(t);
-  t = setTimeout(() => searchIcons(e.target.value), 250);
-});
+    async function doSearch(q) {
+      const term = (q || '').trim();
+      iconResultsGrid.innerHTML = '';
+      if (term.length < 2) return;
+
+      const url = `https://api.iconify.design/search?query=${encodeURIComponent(
+        term
+      )}&limit=48`;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(String(res.status));
+        const data = await res.json();
+        const icons = data.icons || [];
+
+        if (!icons.length) {
+          iconResultsGrid.textContent = 'No results';
+          return;
+        }
+
+        const frag = document.createDocumentFragment();
+        icons.forEach((id) => {
+          const [prefix, name] = id.split(':');
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'icon-choice';
+          btn.innerHTML =
+            `<img src="https://api.iconify.design/${prefix}/${name}.svg" ` +
+            `alt="${id}" width="36" height="36"><span>${id}</span>`;
+          btn.addEventListener('click', () => {
+            iconRefHidden.value = id;
+            [...iconResultsGrid.children].forEach((el) =>
+              el.classList.remove('selected')
+            );
+            btn.classList.add('selected');
+          });
+          frag.appendChild(btn);
+        });
+        iconResultsGrid.appendChild(frag);
+      } catch (err) {
+        console.error('[iconify] search failed:', err);
+        iconResultsGrid.textContent = 'Search failed';
+      }
+    }
+
+    iconSearchInput.addEventListener(
+      'input',
+      debounce((e) => doSearch(e.target.value))
+    );
+    console.log('[iconify] wired');
+  });
+})();
