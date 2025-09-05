@@ -1,12 +1,5 @@
 {# templates/add_activity.html #} {% extends "base.html" %} {% block title %}Add
-Activity · Just Did It{% endblock %} {% block content %} {% with messages =
-get_flashed_messages(with_categories=true) %} {% if messages %}
-<div class="error-messages">
-  {% for category, message in messages %}
-  <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %}
-</div>
-{% endif %} {% endwith %}
+Activity · Just Did It{% endblock %} {% block content %}
 
 <div class="new-activity-container">
   <form method="POST" action="{{ url_for('add_activity') }}">
@@ -40,18 +33,5 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
   src="{{ url_for('static', filename='icons_script.js') }}"
   defer
 ></script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // adjust selector to match your flash markup
-    document.querySelectorAll('.alert, .flash').forEach((el) => {
-      setTimeout(() => {
-        el.style.transition = 'opacity 300ms';
-        el.style.opacity = '0';
-        setTimeout(() => el.remove(), 320);
-      }, 2000);
-    });
-  });
-</script>
 
 {% endblock %}

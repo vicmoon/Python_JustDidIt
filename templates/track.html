@@ -1,5 +1,13 @@
 {# templates/tracking.html #} {% extends "base.html" %} {% block title %}Track ·
-Just Did It{% endblock %} {% block content %}
+Just Did It{% endblock %} {% block content %} {% with messages =
+get_flashed_messages(with_categories=true) %} {% if messages %}
+<div class="error-messages">
+  {% for category, message in messages %}
+  <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+</div>
+
+{% endif %} {% endwith %}
 <div class="tracking-page">
   <div class="tracking-container">
     <div class="tracking-existing-activities">
@@ -13,6 +21,13 @@ Just Did It{% endblock %} {% block content %}
           data-id="{{ a.id }}"
           data-icon="{{ a.icon_ref }}"
         >
+          <button
+            class="pill-delete"
+            type="button"
+            aria-label="Delete activity"
+          >
+            ×
+          </button>
           <img
             src="https://api.iconify.design/{{ a.icon_ref|replace(':','/') }}.svg"
             width="20"
@@ -94,4 +109,16 @@ Just Did It{% endblock %} {% block content %}
   window.ICON_BASE = "{{ url_for('static', filename='icons/') }}";
 </script>
 <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // adjust selector to match your flash markup
+    document.querySelectorAll('.alert, .flash').forEach((el) => {
+      setTimeout(() => {
+        el.style.transition = 'opacity 300ms';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 320);
+      }, 2000);
+    });
+  });
+</script>
 {% endblock %}

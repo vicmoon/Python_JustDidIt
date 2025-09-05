@@ -33,16 +33,44 @@ app.jinja_env.globals['current_year'] = dt.datetime.utcnow().year
 
 
 # ---------------------------------------------------------------------
-# Models
-# ---------------------------------------------------------------------
+# --- Models ---
 class Activity(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(250), nullable=False, unique=True)
-    # icon = db.Column(db.String(120), nullable=True)
-    # NEW: Iconify identifier like "mdi:run" or "tabler:book"
+    __tablename__ = "activity"
 
-    icon_ref = db.Column(db.String(100), nullable=True)
+    id       = db.Column(db.Integer, primary_key=True)
+    name     = db.Column(db.String(250), nullable=False)
+    icon_ref = db.Column(db.String(100), nullable=False)  # Iconify-only -> NOT NULL
+    user_id  = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Unique per user (optional but recommended)
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'name', name='uq_activity_user_name'),
+    )
+
+    # Single relationship; let logs be deleted with the activity
+    logs = db.relationship(
+        "ActivityLog",
+        back_populates="activity",
+        cascade="all, delete-orphan",
+        passive_deletes=True,   # enables DB-level cascade if FK has ON DELETE
+        lazy=True,
+    )
+
+
+class ActivityLog(db.Model):
+    __tablename__ = "activity_log"
+
+    id          = db.Column(db.Integer, primary_key=True)
+    activity_id = db.Column(
+        db.Integer,
+        db.ForeignKey("activity.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    date   = db.Column(db.Date, nullable=False, index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # Match the back_populates on Activity.logs
+    activity = db.relationship("Activity", back_populates="logs", lazy=True)
 
 
 class User(db.Model, UserMixin):
@@ -56,15 +84,6 @@ class User(db.Model, UserMixin):
     activities: Mapped[list[Activity]] = relationship("Activity", backref="user", lazy=True)
 
 
-class ActivityLog(db.Model):
-    __tablename__ = "activity_log"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    activity_id: Mapped[int] = mapped_column(Integer, ForeignKey('activity.id'), nullable=False)
-    date: Mapped[dt.date] = mapped_column(Date, nullable=False)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=False)
-
-    activity: Mapped[Activity] = relationship("Activity", backref="logs", lazy=True)
 
 
 # ---------------------------------------------------------------------
@@ -200,7 +219,6 @@ def log_activity_day():
         date_str = dt.date.fromisoformat(data.get('date'))
     except Exception as e:
         return jsonify(ok=False, error="Bad payload"), 400
-    
 
     #check that the user owns the activity 
 
@@ -222,7 +240,25 @@ def log_activity_day():
         db.session.commit()
         return jsonify(ok=True, state="added", activity_id=activity_id, icon=activity.icon_ref)
 
-    
+
+
+
+
+
+
+@app.post("/activity/<int:activity_id>/delete")
+@login_required
+def delete_activity(activity_id):
+    a = Activity.query.filter_by(id=activity_id, user_id=current_user.id).first()
+    if not a:
+        return jsonify(ok=False, error="Not found"), 404
+    db.session.delete(a)
+    db.session.commit()
+    return jsonify(ok=True)
+
+
+
+
 
 @app.route('/track')
 @login_required
