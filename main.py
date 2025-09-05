@@ -38,7 +38,7 @@ app.jinja_env.globals['current_year'] = dt.datetime.utcnow().year
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False, unique=True)
-    icon = db.Column(db.String(120), nullable=True)
+    # icon = db.Column(db.String(120), nullable=True)
     # NEW: Iconify identifier like "mdi:run" or "tabler:book"
 
     icon_ref = db.Column(db.String(100), nullable=True)
@@ -169,14 +169,13 @@ def logout():
 @login_required
 def add_activity():
     form = ActivityForm()
-    icon_file = form.icon.data or None
+    # icon_file = form.icon.data or None
     icon_ref  = form.icon_ref.data or None
 
 
     if form.validate_on_submit():
         new_activity = Activity(
             name=form.name.data.strip(),
-            icon=icon_file if not icon_ref else None,
             icon_ref=icon_ref,
             user_id=current_user.id 
         )
@@ -221,7 +220,7 @@ def log_activity_day():
         new_log = ActivityLog(activity_id=activity_id, date=date_str, user_id=current_user.id)
         db.session.add(new_log)
         db.session.commit()
-        return jsonify(ok=True, state="added", activity_id=activity_id, icon=activity.icon or activity.icon_ref)
+        return jsonify(ok=True, state="added", activity_id=activity_id, icon=activity.icon_ref)
 
     
 
@@ -253,7 +252,6 @@ def track():
     for log in logs:
         icons_by_date.setdefault(log.date.isoformat(), []).append({
             "activity_id": log.activity_id,
-            "icon": log.activity.icon,
             "icon_ref": log.activity.icon_ref,
 })
 
@@ -262,7 +260,7 @@ def track():
         {
             "date": log.date.isoformat(),
             "activity_id": log.activity_id,
-            "icon": log.activity.icon
+            "icon": log.activity.icon_ref,
         }
         for log in logs
     ]

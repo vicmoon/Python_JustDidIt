@@ -7,10 +7,14 @@ Just Did It{% endblock %} {% block content %}
 
       {% if activities %}
       <ul id="activityList" class="chosen-activity-list">
-        {% for a in activities %} {% set v = a.icon_ref or a.icon %}
-        <li class="activity-pill" data-id="{{ a.id }}" data-icon="{{ v }}">
+        {% for a in activities %}
+        <li
+          class="activity-pill"
+          data-id="{{ a.id }}"
+          data-icon="{{ a.icon_ref }}"
+        >
           <img
-            src="{{ ('https://api.iconify.design/' ~ v|replace(':','/') ~ '.svg') if (':' in v) else url_for('static', filename='icons/' ~ v) }}"
+            src="https://api.iconify.design/{{ a.icon_ref|replace(':','/') }}.svg"
             width="20"
             height="20"
             loading="lazy"
@@ -19,6 +23,7 @@ Just Did It{% endblock %} {% block content %}
         </li>
         {% endfor %}
       </ul>
+
       {% else %}
       <p class="text-muted mt-2">No activities yet.</p>
       {% endif %}
@@ -67,16 +72,15 @@ Just Did It{% endblock %} {% block content %}
       <li class="calendar-box" data-date="{{ date_str }}">
         <span class="day-number">{{ day }}</span>
         <div class="day-icons">
-          {% for it in icons_by_date.get(date_str, []) %} {% set v = it.icon_ref
-          or it.icon %} {% if v %}
+          {% for it in icons_by_date.get(date_str, []) %}
           <img
-            src="{{ ('https://api.iconify.design/' ~ v|replace(':','/') ~ '.svg') if (':' in v) else url_for('static', filename='icons/' ~ v) }}"
-            alt=""
+            src="https://api.iconify.design/{{ (it.icon_ref or it.icon)|replace(':','/') }}.svg"
             class="day-icon"
             data-activity-id="{{ it.activity_id }}"
             loading="lazy"
+            alt=""
           />
-          {% endif %} {% endfor %}
+          {% endfor %}
         </div>
       </li>
       {% endfor %} {# Trailing blanks #} {% for _ in range(trailing_blanks) %}

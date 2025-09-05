@@ -71,10 +71,8 @@ function removeIconFromBox(box, activityId) {
 }
 
 function iconUrl(ref) {
-  if (!ref) return '';
-  return ref.includes(':')
-    ? `https://api.iconify.design/${ref.replace(':', '/')}.svg`
-    : ICON_BASE + ref;
+  // ref like "mdi:run"
+  return `https://api.iconify.design/${ref.replace(':', '/')}.svg`;
 }
 
 /* --- icon picker --- */
