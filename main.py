@@ -1,8 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify
-import datetime as dt
 import calendar
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import CSRFProtect
+from flask_wtf.csrf import generate_csrf
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, ForeignKey, Date, text
 from forms import ActivityForm, LoginForm, RegisterForm
@@ -11,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import my_creds
 import json
 from collections import defaultdict
+import datetime as dt
 
 
 # ---------------------------------------------------------------------
@@ -19,6 +21,13 @@ from collections import defaultdict
 app = Flask(__name__)
 app.config['SECRET_KEY'] = my_creds.SECRET_KEY
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///activities.db"
+
+csrf = CSRFProtect(app)                           # enable CSRF globally
+
+@app.context_processor
+def inject_csrf_token():
+    # makes csrf_token() available in ALL templates
+    return dict(csrf_token=generate_csrf)
 
 db = SQLAlchemy(app)
 Bootstrap(app)
@@ -30,6 +39,9 @@ login_manager.login_message_category = 'info'
 
 # Make current year available in all templates
 app.jinja_env.globals['current_year'] = dt.datetime.utcnow().year
+
+
+
 
 
 # ---------------------------------------------------------------------
@@ -99,6 +111,8 @@ def load_user(user_id):
 # ---------------------------------------------------------------------
 with app.app_context():
     db.create_all()
+
+    
 
 
 # ---------------------------------------------------------------------
@@ -210,36 +224,62 @@ def add_activity():
     return render_template("add_activity.html", form=form)
 
 
-@app.route("/log_activity_day", methods=["POST"])
+
+
+
+@app.post("/log_activity_day")
 @login_required
 def log_activity_day():
-    data = request.get_json()
+    # 1) Parse + validate payload
     try:
-        activity_id = int(data.get('activity_id'))
-        date_str = dt.date.fromisoformat(data.get('date'))
-    except Exception as e:
-        return jsonify(ok=False, error="Bad payload"), 400
+        data = request.get_json(silent=True) or {}
+        activity_id = int(data["activity_id"])
+        day = _date.fromisoformat(data["date"])   # "YYYY-MM-DD" -> date
+    except Exception:
+        current_app.logger.exception("log_activity_day: bad payload")
+        return jsonify(ok=False, error="bad-payload"), 400
 
-    #check that the user owns the activity 
-
-    activity = Activity.query.filter_by(id=activity_id, user_id=current_user.id).first()
+    # 2) Ownership check
+    activity = Activity.query.filter_by(
+        id=activity_id, user_id=current_user.id
+    ).first()
     if not activity:
-        return jsonify(ok=False, error="Not your activity"), 403
-    
+        return jsonify(ok=False, error="not-your-activity"), 403
 
-    existing = ActivityLog.query.filter_by(activity_id=activity_id, date=date_str, user_id=current_user.id).first()
-    
-    if existing:
-        db.session.delete(existing)
-        db.session.commit()
-        return jsonify(ok=True, state="removed", activity_id=activity_id)
-  
-    else:
-        new_log = ActivityLog(activity_id=activity_id, date=date_str, user_id=current_user.id)
+    # 3) Toggle: if a log exists for this day, delete; otherwise insert
+    try:
+        existing = ActivityLog.query.filter_by(
+            activity_id=activity_id, user_id=current_user.id, date=day
+        ).first()
+
+        if existing:
+            db.session.delete(existing)
+            db.session.commit()
+            return jsonify(ok=True, state="removed", activity_id=activity_id)
+
+        new_log = ActivityLog(
+            activity_id=activity_id,
+            user_id=current_user.id,
+            date=day,
+        )
         db.session.add(new_log)
         db.session.commit()
-        return jsonify(ok=True, state="added", activity_id=activity_id, icon=activity.icon_ref)
 
+        # return icon_ref so UI renders exactly what the server will render on reload
+        return jsonify(
+            ok=True,
+            state="added",
+            activity_id=activity_id,
+            icon=activity.icon_ref,
+        )
+    except IntegrityError:
+        db.session.rollback()
+        current_app.logger.exception("log_activity_day: integrity error")
+        return jsonify(ok=False, error="db-error"), 500
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("log_activity_day: unexpected error")
+        return jsonify(ok=False, error="unexpected-error"), 500
 
 
 
@@ -252,7 +292,8 @@ def delete_activity(activity_id):
     a = Activity.query.filter_by(id=activity_id, user_id=current_user.id).first()
     if not a:
         return jsonify(ok=False, error="Not found"), 404
-    db.session.delete(a)
+
+    db.session.delete(a)            # ORM cascade removes ActivityLog rows
     db.session.commit()
     return jsonify(ok=True)
 
@@ -296,7 +337,7 @@ def track():
         {
             "date": log.date.isoformat(),
             "activity_id": log.activity_id,
-            "icon": log.activity.icon_ref,
+            "icon_ref": log.activity.icon_ref,
         }
         for log in logs
     ]

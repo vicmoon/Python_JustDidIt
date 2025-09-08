@@ -9,11 +9,10 @@ async function postJSON(url, payload) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(CSRF_TOKEN ? { 'X-CSRFToken': CSRF_TOKEN } : {}),
+      'X-CSRFToken': CSRF_TOKEN, // <-- important
     },
     body: JSON.stringify(payload || {}),
   });
-  // Try to parse JSON either way (helpful for error surfaces)
   let data = null;
   try {
     data = await res.json();
