@@ -6,5 +6,5 @@ Now, a couple of years later was talking a course in web developement. One advis
 
 <img width="800" height="900" alt="image" src="https://github.com/user-attachments/assets/c86599d7-86ce-43eb-9893-af1fd7378baf" /> 
 
-I called it it "Just did it"  to espress the joy of having accomplished something :) 
+I called it it "Just did it"  to express the joy of having accomplished something :) 
 
