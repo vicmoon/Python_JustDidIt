@@ -28,12 +28,16 @@ current_user.is_authenticated %}
       habits.
     </p>
   </div>
-  <div class="buttons">
+  <div class="main_buttons">
     <div class="all_buttons">
-      <a href="{{ url_for('login') }}"><button>Login</button></a>
+      <a href="{{ url_for('login') }}"
+        ><button class="main__login_button">Login</button></a
+      >
     </div>
     <div class="all_buttons">
-      <a href="{{ url_for('register') }}"><button>Register</button></a>
+      <a href="{{ url_for('register') }}"
+        ><button class="main__register_button">Register</button></a
+      >
     </div>
   </div>
 </section>

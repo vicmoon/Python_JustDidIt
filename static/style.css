@@ -7,7 +7,7 @@ body {
 
 body.layout {
   font-family: 'Roboto', sans-serif;
-  background-color: #d6e1e4;
+  background-color: #b1c0d6;
   color: #211c84;
   text-align: center;
   display: flex;
@@ -70,6 +70,31 @@ section {
   margin: 0 auto;
   padding: 20px;
   font-size: 40px;
+}
+
+.main_buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+
+.main__login_button,
+.main__register_button {
+  background-color: #48b3af;
+  width: 100px;
+  padding: 15px;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: bold;
+  border: none;
+  color: white;
+}
+
+.main_buttons button:hover {
+  background-color: #67c090;
+  border: olive 1px solid;
+  cursor: pointer;
 }
 
 /* Header styling */
