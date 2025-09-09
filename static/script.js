@@ -1,8 +1,7 @@
 // tracking script
 
 // --- config / csrf ---------------------------------------------------
-const CSRF_TOKEN =
-  document.querySelector('meta[name="csrf-token"]')?.content || '';
+const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content;
 
 async function postJSON(url, payload) {
   const res = await fetch(url, {
@@ -128,6 +127,28 @@ if (activityList) {
     // console.log('Selected activity:', activeActivityId, activeActivityIcon);
   });
 }
+// --- helper: POST JSON with CSRF and cookies ------------------------
+async function postJSON(url, payload) {
+  const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrf || '',
+      },
+      credentials: 'same-origin', // include session cookie
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json().catch(() => null);
+    return { ok: res.ok, status: res.status, data };
+  } catch (err) {
+    console.error('Network error:', err);
+    return { ok: false, status: 0, data: null };
+  }
+}
 
 // --- calendar click: toggle log --------------------------------------
 document.querySelectorAll('.calendar-box[data-date]').forEach((box) => {
@@ -136,12 +157,13 @@ document.querySelectorAll('.calendar-box[data-date]').forEach((box) => {
       alert('Select an activity first 🙂');
       return;
     }
-    const dateIso = box.dataset.date;
 
-    const { ok, data, status } = await postJSON('/log_activity_day', {
-      date: dateIso,
+    const payload = {
+      date: box.dataset.date, // "YYYY-MM-DD"
       activity_id: Number(activeActivityId), // server expects int
-    });
+    };
+
+    const { ok, data, status } = await postJSON('/log_activity_day', payload);
 
     if (!ok || !data) {
       console.error('Error logging activity', status, data);
@@ -153,13 +175,12 @@ document.querySelectorAll('.calendar-box[data-date]').forEach((box) => {
     }
 
     if (data.state === 'added') {
-      // Prefer server-provided icon (icon_ref); fallback to selected
       const ref = data.icon || activeActivityIcon;
       addIconToBox(box, data.activity_id ?? activeActivityId, ref);
     } else if (data.state === 'removed') {
       removeIconFromBox(box, data.activity_id ?? activeActivityId);
     }
 
-    box.classList.toggle('is-selected'); // optional visual feedback
+    box.classList.toggle('is-selected');
   });
 });

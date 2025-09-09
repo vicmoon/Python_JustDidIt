@@ -1,11 +1,13 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify
+from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify, current_app
 import calendar
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import generate_csrf
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, ForeignKey, Date, text
+from sqlalchemy import Integer, String, ForeignKey, Date, text, event
+from sqlalchemy.engine import Engine
 from forms import ActivityForm, LoginForm, RegisterForm
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,6 +15,8 @@ import my_creds
 import json
 from collections import defaultdict
 import datetime as dt
+from datetime import date
+import sqlite3
 
 
 # ---------------------------------------------------------------------
@@ -30,6 +34,16 @@ def inject_csrf_token():
     return dict(csrf_token=generate_csrf)
 
 db = SQLAlchemy(app)
+
+# --- Enable SQLite foreign keys for every new connection -------------
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    # Only for SQLite connections
+    if isinstance(dbapi_connection, sqlite3.Connection):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
 Bootstrap(app)
 
 login_manager = LoginManager()
@@ -39,9 +53,6 @@ login_manager.login_message_category = 'info'
 
 # Make current year available in all templates
 app.jinja_env.globals['current_year'] = dt.datetime.utcnow().year
-
-
-
 
 
 # ---------------------------------------------------------------------
@@ -54,17 +65,16 @@ class Activity(db.Model):
     icon_ref = db.Column(db.String(100), nullable=False)  # Iconify-only -> NOT NULL
     user_id  = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    # Unique per user (optional but recommended)
     __table_args__ = (
         db.UniqueConstraint('user_id', 'name', name='uq_activity_user_name'),
     )
 
-    # Single relationship; let logs be deleted with the activity
+    # ORM cascade; DB cascade happens via FK on ActivityLog (requires PRAGMA ON)
     logs = db.relationship(
         "ActivityLog",
         back_populates="activity",
         cascade="all, delete-orphan",
-        passive_deletes=True,   # enables DB-level cascade if FK has ON DELETE
+        passive_deletes=True,
         lazy=True,
     )
 
@@ -78,10 +88,9 @@ class ActivityLog(db.Model):
         db.ForeignKey("activity.id", ondelete="CASCADE"),
         nullable=False,
     )
-    date   = db.Column(db.Date, nullable=False, index=True)
+    date    = db.Column(db.Date, nullable=False, index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    # Match the back_populates on Activity.logs
     activity = db.relationship("Activity", back_populates="logs", lazy=True)
 
 
@@ -96,8 +105,6 @@ class User(db.Model, UserMixin):
     activities: Mapped[list[Activity]] = relationship("Activity", backref="user", lazy=True)
 
 
-
-
 # ---------------------------------------------------------------------
 # User loader
 # ---------------------------------------------------------------------
@@ -107,12 +114,13 @@ def load_user(user_id):
 
 
 # ---------------------------------------------------------------------
-# DB init
+# DB init + verify PRAGMA
 # ---------------------------------------------------------------------
 with app.app_context():
     db.create_all()
-
-    
+    # Log PRAGMA to confirm FK enforcement is ON (should print 1)
+    fk = db.session.execute(text("PRAGMA foreign_keys")).scalar()
+    current_app.logger.info("SQLite PRAGMA foreign_keys=%s", fk)
 
 
 # ---------------------------------------------------------------------
@@ -134,7 +142,6 @@ def require_login():
 @app.route("/")
 def home():
     return render_template("index.html")
-
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -182,7 +189,7 @@ def login():
             flash("That email does not exist, please try again.", "danger")
             return redirect(url_for('login'))
 
-        elif not check_password_hash(user.password, password):
+        if not check_password_hash(user.password, password):
             flash('Password incorrect, please try again.', "danger")
             return redirect(url_for('login'))
 
@@ -202,21 +209,18 @@ def logout():
 @login_required
 def add_activity():
     form = ActivityForm()
-    # icon_file = form.icon.data or None
     icon_ref  = form.icon_ref.data or None
-
 
     if form.validate_on_submit():
         new_activity = Activity(
             name=form.name.data.strip(),
             icon_ref=icon_ref,
-            user_id=current_user.id 
+            user_id=current_user.id
         )
         db.session.add(new_activity)
         db.session.commit()
         flash('Activity added!', "success")
         return redirect(url_for('track'))
-    
 
     if request.method == "POST":
         flash(f"Please fix {form.errors}", "danger")
@@ -224,17 +228,24 @@ def add_activity():
     return render_template("add_activity.html", form=form)
 
 
-
-
-
 @app.post("/log_activity_day")
 @login_required
 def log_activity_day():
-    # 1) Parse + validate payload
+    # 1) Parse + validate payload (robust)
     try:
-        data = request.get_json(silent=True) or {}
+        current_app.logger.info("REQ CT=%r", request.headers.get("Content-Type"))
+        current_app.logger.info("REQ RAW=%r", request.get_data(as_text=True))
+
+        if request.is_json:
+            data = request.get_json(silent=True) or {}
+        else:
+            try:
+                data = json.loads(request.get_data(as_text=True) or "{}")
+            except Exception:
+                data = {}
+
         activity_id = int(data["activity_id"])
-        day = _date.fromisoformat(data["date"])   # "YYYY-MM-DD" -> date
+        day = date.fromisoformat(data["date"])
     except Exception:
         current_app.logger.exception("log_activity_day: bad payload")
         return jsonify(ok=False, error="bad-payload"), 400
@@ -246,7 +257,7 @@ def log_activity_day():
     if not activity:
         return jsonify(ok=False, error="not-your-activity"), 403
 
-    # 3) Toggle: if a log exists for this day, delete; otherwise insert
+    # 3) Toggle log
     try:
         existing = ActivityLog.query.filter_by(
             activity_id=activity_id, user_id=current_user.id, date=day
@@ -265,13 +276,13 @@ def log_activity_day():
         db.session.add(new_log)
         db.session.commit()
 
-        # return icon_ref so UI renders exactly what the server will render on reload
         return jsonify(
             ok=True,
             state="added",
             activity_id=activity_id,
-            icon=activity.icon_ref,
+            icon=activity.icon_ref,  # for immediate UI render
         )
+
     except IntegrityError:
         db.session.rollback()
         current_app.logger.exception("log_activity_day: integrity error")
@@ -280,10 +291,6 @@ def log_activity_day():
         db.session.rollback()
         current_app.logger.exception("log_activity_day: unexpected error")
         return jsonify(ok=False, error="unexpected-error"), 500
-
-
-
-
 
 
 @app.post("/activity/<int:activity_id>/delete")
@@ -298,13 +305,9 @@ def delete_activity(activity_id):
     return jsonify(ok=True)
 
 
-
-
-
 @app.route('/track')
 @login_required
 def track():
-
     today = dt.date.today()
     year = request.args.get("year", type=int, default=today.year)
     month_num = request.args.get("month", type=int, default=today.month)
@@ -313,31 +316,33 @@ def track():
     start = dt.date(year, month_num, 1)
     end = dt.date(year + (month_num == 12), (month_num % 12) + 1, 1)  # first day next month
 
-    
     activities = Activity.query.filter_by(user_id=current_user.id).all()
+
+    # Inner join to avoid orphan rows; all logs will have an Activity
     logs = (
-        ActivityLog.query
+        db.session.query(ActivityLog)
+        .join(Activity, Activity.id == ActivityLog.activity_id)
         .filter(
             ActivityLog.user_id == current_user.id,
             ActivityLog.date >= start,
             ActivityLog.date <= end
-        ).all()
+        )
+        .all()
     )
 
-    # for server-side icons
     icons_by_date = {}
     for log in logs:
+        act = log.activity  # guaranteed by join
         icons_by_date.setdefault(log.date.isoformat(), []).append({
             "activity_id": log.activity_id,
-            "icon_ref": log.activity.icon_ref,
-})
+            "icon_ref": getattr(act, "icon_ref", None),
+        })
 
-    # for client-side JS
     logs_json = [
         {
             "date": log.date.isoformat(),
             "activity_id": log.activity_id,
-            "icon_ref": log.activity.icon_ref,
+            "icon_ref": getattr(log.activity, "icon_ref", None),
         }
         for log in logs
     ]
@@ -354,7 +359,6 @@ def track():
     prev_year = year - 1 if month_num == 1 else year
     next_month = 1 if month_num == 12 else month_num + 1
     next_year = year + 1 if month_num == 12 else year
-
 
     return render_template(
         "track.html",
