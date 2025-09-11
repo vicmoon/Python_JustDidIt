@@ -318,7 +318,7 @@ input {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .tracking-container li {
@@ -329,13 +329,26 @@ input {
 .prev-next-nav {
   margin-bottom: 5px;
 }
+.prev-next-nav:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+.cal-title {
+  margin-top: -20px;
+}
+.new_activity_action {
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+.new_activity_action a:hover {
+  background-color: #a8bba3;
+}
 
 .new_activity_action a {
   text-decoration: none;
   background-color: #cbdceb;
-  padding: 10px 10px;
+  padding: 10px;
   border-radius: 20px;
-  margin-bottom: 10px;
 }
 
 .chosen-activity-list {
@@ -345,17 +358,17 @@ input {
   align-items: center;
   gap: 15px;
   flex-wrap: wrap;
-  margin-top: 50px;
   margin-bottom: 10px;
-  max-width: 600px;
+  margin-top: -30px;
+  max-width: 400px;
 }
 .month-nav {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 /* Container that holds all day boxes */
@@ -372,17 +385,18 @@ input {
 
 /* Months Nav */
 .month-nav {
-  margin: 8px 0 12px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
   margin-top: 20px;
+  margin-bottom: -20px;
 }
 .month-nav a {
-  padding: 17px 17px;
+  padding: 10px;
   border: 1px solid #ccc;
   background-color: #cbdceb;
   border-radius: 10px;
+
   text-decoration: none;
   font-size: 14px;
   color: #333;
@@ -449,12 +463,10 @@ input {
    Rough will paint the fill for you. */
 
 .calendar-box.is-selected {
-
   border-radius: 6px;
 }
 
 .activity-pill.is-selected {
-  outline: 2px solid #A7E399;
   border-radius: 30px;
   padding: 5px;
 }
@@ -570,7 +582,7 @@ button.icon-choice {
 .day-icon {
   width: 18px;
   height: 18px;
-  object-fit: contain; /* keep aspect ratio */
+  object-fit: contain;
   display: block;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.12));
 }
@@ -578,8 +590,12 @@ button.icon-choice {
 .day-number {
   position: relative;
   top: 10px;
-  left: 15px;
+  left: 18px;
   color: #000;
+  background-color: #cbdceb;
+  font-size: 10px;
+  padding: 5px;
+  border-radius: 50%;
 }
 
 .day-icons img.day-icon {
@@ -598,13 +614,15 @@ button.icon-choice {
 .activity-pill {
   position: relative;
   padding-right: 30px; /* room for the X */
+  background-color: #ebd9d1;
+  padding: 10px;
+  border-radius: 30px;
 }
 .activity-pill:hover {
   cursor: pointer;
-  background-color: #c4ccd4;
-  padding: 10px 10px;
+  background-color: #a8bba3;
+  padding: 10px;
   border-radius: 30px;
-  transition: ease-in-out;
 }
 
 .activity-pill:hover .pill-delete {
@@ -631,7 +649,6 @@ button.icon-choice {
 
 .pill-delete:hover {
   background-color: #445d94;
-}
 }
 
 .submit_button {

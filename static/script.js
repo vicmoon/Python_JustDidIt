@@ -213,7 +213,7 @@ function drawRoughBox(box) {
       seed,
       roughness: 1.2,
       fill: cssVar('--rough-fill', '#9fd3f6'),
-      fillStyle: 'solid',
+      fillStyle: 'zigzag',
       stroke: 'none',
     });
     svg.appendChild(fill);

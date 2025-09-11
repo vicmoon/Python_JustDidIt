@@ -1,20 +1,16 @@
 {# templates/tracking.html #} {% extends "base.html" %} {% block title %}Track ·
 Just Did It{% endblock %} {% block content %} {% with messages =
 get_flashed_messages(with_categories=true) %} {% if messages %}
-<div class="error-messages">
+<!-- <div class="error-messages">
   {% for category, message in messages %}
   <div class="alert alert-{{ category }}">{{ message }}</div>
   {% endfor %}
-</div>
+</div> -->
 
 {% endif %} {% endwith %}
 <div class="tracking-page">
   <div class="tracking-container">
     <div class="tracking-existing-activities">
-      <div class="new_activity_action">
-        <a href="{{ url_for('add_activity') }}">Add Activity</a>
-      </div>
-
       {% if activities %}
       <ul id="activityList" class="chosen-activity-list">
         {% for a in activities %}
@@ -40,6 +36,9 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
         </li>
         {% endfor %}
       </ul>
+      <div class="new_activity_action">
+        <a href="{{ url_for('add_activity') }}">Add Activity</a>
+      </div>
 
       {% else %}
       <p class="text-muted mt-2">No activities yet.</p>
