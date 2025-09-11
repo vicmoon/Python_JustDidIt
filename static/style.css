@@ -7,7 +7,7 @@ body {
 
 body.layout {
   font-family: 'Roboto', sans-serif;
-  background-color: #f0ece6;
+  background-color: #eeece9;
   color: #211c84;
   text-align: center;
   display: flex;
@@ -108,23 +108,19 @@ section {
 /* Header styling */
 
 :root {
-  --nav-h: 70px;
+  --nav-h: 50px;
   --nav-fg: #0c2a6a; /* deep navy for text */
   --nav-accent: #18e6a8; /* your logo’s green */
 }
 
 .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   height: var(--nav-h);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin-top: 20px;
   padding: 5px 40px;
   background: #f0ece6;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .nav-container {
@@ -298,12 +294,11 @@ input {
 /* Tracking  */
 
 .tracking-page {
-  margin-top: 10%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  padding: 50px;
+  padding: 40px;
 }
 
 .tracking-container {
@@ -359,7 +354,7 @@ input {
   gap: 15px;
   flex-wrap: wrap;
   margin-bottom: 10px;
-  margin-top: -30px;
+  margin-top: -80px;
   max-width: 400px;
 }
 .month-nav {
@@ -657,7 +652,7 @@ button.icon-choice {
 
 /* Footer styling */
 .site-footer {
-  background: #384a3c;
+  background: #5d688a;
   color: #fff;
 }
 
@@ -680,6 +675,15 @@ button.icon-choice {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.link-list a {
+  color: #f7f4ea;
+  text-decoration: none;
+}
+
+.link-list a:hover {
+  color: #4c6883;
 }
 .link-list li {
   margin: 0.25rem 0;
