@@ -4,7 +4,7 @@ There was something attractive in that neat row of crossed days. I felt like I w
 
 Now, a couple of years later was talking a course in web developement. One advise from the teacher, as to how to stay concentrated and keep learning even if the subject to study is pretty complex, was to keep track, be persistent. Basically the idea is that you need to learn or practice something every day in order to improve. 
 
-<img width="800" height="900" alt="image" src="https://github.com/user-attachments/assets/c86599d7-86ce-43eb-9893-af1fd7378baf" /> 
+<img width="1000" height="1000" alt="cat_logo" src="https://github.com/user-attachments/assets/9e6e33ad-b607-4bb0-aa1e-7fa9a51149d5" />
 
 I called it it "Just did it"  to express the joy of having accomplished something :) 
 
