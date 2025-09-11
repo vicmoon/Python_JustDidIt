@@ -7,7 +7,7 @@ body {
 
 body.layout {
   font-family: 'Roboto', sans-serif;
-  background-color: #b1c0d6;
+  background-color: #f0ece6;
   color: #211c84;
   text-align: center;
   display: flex;
@@ -35,6 +35,11 @@ section:nth-of-type(3) {
   background-color: #c2e9fb;
 }
 
+.hero {
+  display: flex;
+  flex-direction: column;
+}
+
 section {
   min-height: 100vh; /* full screen height */
   display: flex; /* use flexbox for centering */
@@ -53,6 +58,7 @@ section {
 .intro-quote {
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
   font-size: 40px;
   max-width: 800px;
@@ -80,7 +86,9 @@ section {
 }
 
 .main__login_button,
-.main__register_button {
+.main__register_button,
+.main_add_activity,
+.main_track_activity {
   background-color: #48b3af;
   width: 100px;
   padding: 15px;
@@ -115,7 +123,7 @@ section {
   align-items: center;
   justify-content: space-between;
   padding: 5px 40px;
-  background: rgba(255, 255, 255, 0.85);
+  background: #f0ece6;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -171,6 +179,7 @@ section {
 }
 
 /* Navigation links styling */
+
 .nav-links a {
   color: #124170;
   text-decoration: none;
@@ -181,50 +190,18 @@ section {
 }
 
 .nav-links a:hover {
-  color: #26667f;
-  text-decoration: underline;
+  text-decoration-line: underline;
+  transform: scale(2);
 }
+
 .tracking li {
   list-style: none;
-}
-.intro-activities {
-  margin-top: 300px;
-  display: flex;
-
-  gap: 1rem;
-  align-items: start;
-  justify-content: center;
-  margin: 0 auto;
 }
 
 .tracking {
   list-style: none;
   padding: 0;
   margin: 0;
-}
-
-.activity-item {
-  border: 1px solid #ddd;
-  padding: 1rem;
-  border-radius: 8px;
-  min-width: 200px;
-}
-
-.add-activity {
-  display: flex;
-  margin-top: 100px;
-  align-items: center;
-  justify-content: center;
-  border: 2px dashed #aaa;
-  padding: 1rem;
-  border-radius: 8px;
-  min-width: 200px;
-  cursor: pointer;
-}
-
-.new-activity-intro {
-  margin-top: 150px;
-  font-size: 32px;
 }
 
 /* REGISTER */
@@ -267,11 +244,6 @@ section {
   gap: 10px;
 }
 
-.btn-primary {
-  padding: 15px;
-  background-color: #67c090;
-  border-radius: 30px;
-}
 button:hover {
   background-color: #fbf3d5;
   cursor: pointer;
@@ -355,7 +327,15 @@ input {
 }
 
 .prev-next-nav {
-  margin-bottom: 30px;
+  margin-bottom: 5px;
+}
+
+.new_activity_action a {
+  text-decoration: none;
+  background-color: #cbdceb;
+  padding: 10px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
 }
 
 .chosen-activity-list {
@@ -365,8 +345,9 @@ input {
   align-items: center;
   gap: 15px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
-  max-width: 400px;
+  margin-top: 50px;
+  margin-bottom: 10px;
+  max-width: 600px;
 }
 .month-nav {
   display: flex;
@@ -388,17 +369,20 @@ input {
   flex-wrap: wrap;
   gap: 10px;
 }
-/* Nav */
+
+/* Months Nav */
 .month-nav {
   margin: 8px 0 12px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
+  margin-top: 20px;
 }
 .month-nav a {
-  padding: 4px 10px;
+  padding: 17px 17px;
   border: 1px solid #ccc;
-  border-radius: 6px;
+  background-color: #cbdceb;
+  border-radius: 10px;
   text-decoration: none;
   font-size: 14px;
   color: #333;
@@ -412,11 +396,15 @@ input {
   opacity: 0.5;
 }
 
+.month-nav a:hover {
+  transform: scale(1.1);
+  background-color: #6d94c5;
+}
 /* Calendar Grid */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 60px); /* 7 columns */
-  gap: 6px;
+  gap: 15px;
   justify-content: center;
   margin: 6px 0 18px;
   padding: 0;
@@ -429,33 +417,45 @@ input {
 }
 
 /* Day cells */
-.calendar-box {
-  border: 1px solid #ccc;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f5f5;
-  border-radius: 6px;
-  position: relative;
-  cursor: pointer;
-  box-sizing: border-box;
-}
-.calendar-box.empty {
-  background: transparent;
-  border: 1px solid transparent;
-  cursor: default;
+
+:root {
+  --ink: #5c5a5a;
+  --rough-fill: #9fd3f6;
 }
 
+.calendar-box {
+  position: relative;
+  height: 80px;
+  width: 80px;
+}
+
+.calendar-box:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.calendar-box .sketch {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.calendar-box > *:not(.sketch) {
+  position: relative;
+  z-index: 1;
+}
+
+/* If you previously colored .is-selected via background, remove it.
+   Rough will paint the fill for you. */
+
 .calendar-box.is-selected {
-  outline: 2px solid #25dd14;
+
   border-radius: 6px;
 }
 
 .activity-pill.is-selected {
-  outline: 2px solid #25dd14;
-  border-radius: 999px;
+  outline: 2px solid #A7E399;
+  border-radius: 30px;
   padding: 5px;
 }
 
@@ -470,7 +470,7 @@ input {
 .error-messages {
   color: #b00020;
   font-size: 1rem;
-  margin-top: 10%;
+  margin-top: 10px;
 }
 /* Icon picker styles */
 .new-activity-container {
@@ -558,8 +558,8 @@ button.icon-choice {
 }
 .day-icons {
   position: absolute;
-  top: 4px;
-  left: 4px;
+  top: 10px;
+  left: 15px;
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
@@ -568,11 +568,18 @@ button.icon-choice {
 
 /* Icon size + look */
 .day-icon {
-  width: 18px; /* tweak: 16–22px range looks good */
+  width: 18px;
   height: 18px;
   object-fit: contain; /* keep aspect ratio */
   display: block;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.12));
+}
+
+.day-number {
+  position: relative;
+  top: 10px;
+  left: 15px;
+  color: #000;
 }
 
 .day-icons img.day-icon {
@@ -583,15 +590,28 @@ button.icon-choice {
 
 /* Optional: selected pill styling */
 .activity-pill.is-selected {
-  outline: 2px solid #25dd14;
+  outline: 2px solid;
   border-radius: 999px;
+  background-color: #c4ccd4;
 }
 
 .activity-pill {
   position: relative;
-  padding-right: 22px; /* room for the X */
+  padding-right: 30px; /* room for the X */
+}
+.activity-pill:hover {
+  cursor: pointer;
+  background-color: #c4ccd4;
+  padding: 10px 10px;
+  border-radius: 30px;
+  transition: ease-in-out;
 }
 
+.activity-pill:hover .pill-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 .pill-delete {
   position: absolute;
   top: -6px;
@@ -606,10 +626,12 @@ button.icon-choice {
   color: #eee;
   cursor: pointer;
   opacity: 0.85;
+  display: none;
 }
 
 .pill-delete:hover {
-  opacity: 1;
+  background-color: #445d94;
+}
 }
 
 .submit_button {
@@ -618,17 +640,15 @@ button.icon-choice {
 
 /* Footer styling */
 .site-footer {
-  background: #121d4e;
+  background: #384a3c;
   color: #fff;
-  padding: 1rem 1rem;
 }
 
 .footer-grid {
-  max-width: 1440px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  margin: 0 auto;
-  gap: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin-top: 20px;
 }
 
 .footer-logo {

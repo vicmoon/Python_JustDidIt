@@ -11,7 +11,9 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
 <div class="tracking-page">
   <div class="tracking-container">
     <div class="tracking-existing-activities">
-      <div><a href="{{ url_for('add_activity') }}">Add Activity</a></div>
+      <div class="new_activity_action">
+        <a href="{{ url_for('add_activity') }}">Add Activity</a>
+      </div>
 
       {% if activities %}
       <ul id="activityList" class="chosen-activity-list">
@@ -45,6 +47,7 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
     </div>
 
     <nav class="prev-next-nav">
+      <h2 class="cal-title">{{ month }} {{ year }}</h2>
       <a href="{{ url_for('track', year=prev_year, month=prev_month) }}"
         >← Prev</a
       >
@@ -67,8 +70,6 @@ get_flashed_messages(with_categories=true) %} {% if messages %}
   </div>
 
   <div class="calendar-wrapper">
-    <h2 class="cal-title">{{ month }} {{ year }}</h2>
-
     <ul class="calendar-grid weekday-row" aria-hidden="true">
       <li>M</li>
       <li>T</li>

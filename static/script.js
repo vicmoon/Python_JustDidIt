@@ -127,30 +127,9 @@ if (activityList) {
     // console.log('Selected activity:', activeActivityId, activeActivityIcon);
   });
 }
-// --- helper: POST JSON with CSRF and cookies ------------------------
-async function postJSON(url, payload) {
-  const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
-
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrf || '',
-      },
-      credentials: 'same-origin', // include session cookie
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json().catch(() => null);
-    return { ok: res.ok, status: res.status, data };
-  } catch (err) {
-    console.error('Network error:', err);
-    return { ok: false, status: 0, data: null };
-  }
-}
 
 // --- calendar click: toggle log --------------------------------------
+
 document.querySelectorAll('.calendar-box[data-date]').forEach((box) => {
   box.addEventListener('click', async () => {
     if (!activeActivityId || !activeActivityIcon) {
@@ -182,5 +161,78 @@ document.querySelectorAll('.calendar-box[data-date]').forEach((box) => {
     }
 
     box.classList.toggle('is-selected');
+    drawRoughBox(box);
   });
 });
+
+/* --- ROUGH.JS: sketchy borders + fill ------------------------------ */
+
+// small helper
+function cssVar(name, fallback) {
+  const v = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+  return v || fallback;
+}
+function debounce(fn, t = 120) {
+  let id;
+  return (...a) => {
+    clearTimeout(id);
+    id = setTimeout(() => fn(...a), t);
+  };
+}
+function stableSeed(str) {
+  // deterministic per date
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+function drawRoughBox(box) {
+  // remove previous drawing
+  box.querySelector('svg.sketch')?.remove();
+
+  const w = Math.round(box.clientWidth);
+  const h = Math.round(box.clientHeight);
+  if (!w || !h) return;
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.classList.add('sketch');
+  svg.setAttribute('width', w);
+  svg.setAttribute('height', h);
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  box.prepend(svg);
+
+  const rc = rough.svg(svg);
+  const margin = 6;
+  const seed = stableSeed(box.dataset.date || `${Math.random()}`);
+
+  // Rough fill for selected/logged days
+  if (box.classList.contains('is-selected')) {
+    const fill = rc.rectangle(margin, margin, w - margin * 2, h - margin * 2, {
+      seed,
+      roughness: 1.2,
+      fill: cssVar('--rough-fill', '#9fd3f6'),
+      fillStyle: 'solid',
+      stroke: 'none',
+    });
+    svg.appendChild(fill);
+  }
+
+  // Wobbly ink border
+  const border = rc.rectangle(margin, margin, w - margin * 2, h - margin * 2, {
+    seed,
+    roughness: 1.8,
+    bowing: 2.3,
+    stroke: cssVar('--ink', '#1a1a1a'),
+    strokeWidth: 2,
+  });
+  svg.appendChild(border);
+}
+
+function drawAllRough() {
+  document.querySelectorAll('.calendar-box[data-date]').forEach(drawRoughBox);
+}
+
+window.addEventListener('DOMContentLoaded', drawAllRough);
+window.addEventListener('resize', debounce(drawAllRough, 150));
