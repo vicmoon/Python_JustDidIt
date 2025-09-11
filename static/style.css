@@ -186,8 +186,7 @@ section {
 }
 
 .nav-links a:hover {
-  text-decoration-line: underline;
-  transform: scale(2);
+  color: #8ebdd4;
 }
 
 .tracking li {
@@ -683,7 +682,7 @@ button.icon-choice {
 }
 
 .link-list a:hover {
-  color: #4c6883;
+  color: #c5cacf;
 }
 .link-list li {
   margin: 0.25rem 0;
