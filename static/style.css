@@ -349,6 +349,7 @@ input {
   margin-top: -80px;
   max-width: 400px;
 }
+
 .month-nav {
   display: flex;
   justify-content: center;
@@ -781,8 +782,15 @@ button.icon-choice {
   }
 
   .chosen-activity-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    margin-top: 80px;
     max-width: 300px;
-    margin-top: 70px;
   }
 }
 /* ≥ 480px */
