@@ -264,13 +264,6 @@ button:hover {
   margin-bottom: 15px;
 }
 
-.login-form label,
-.register-form label {
-  width: 100px; /* Adjust this width to your preference */
-  text-align: right;
-  margin-right: 5px;
-}
-
 .login-form,
 .register-form {
   display: flex;
@@ -284,8 +277,8 @@ button:hover {
   margin-top: 10%;
 }
 input {
+  width: 250px;
   padding: 10px;
-  width: px;
   border-radius: 30px;
   margin-bottom: 10px;
 }
@@ -694,236 +687,115 @@ button.icon-choice {
   text-align: left;
 }
 
-/* ===============================
-   Responsive additions & overrides
-   =============================== */
-
-/* 1) Fluid typography & widths (apply everywhere) */
-.intro-quote,
-.intro-text,
-.intro-text-description {
-  /* Your 40px is great on large screens; clamp down on small */
-  font-size: clamp(20px, 4vw, 40px);
-}
-
-.calendar-container {
-  /* Avoid fixed width overflow on phones */
-  width: min(100%, 800px);
-  padding-inline: 10px;
-}
-
-/* 2) Calendar sizing via CSS variables (mobile-first) */
-:root {
-  --day: 48px; /* base day size on small screens */
-  --gap: 8px;
-}
-
-.calendar-grid {
-  grid-template-columns: repeat(7, var(--day));
-  gap: var(--gap);
-}
-
-.calendar-box {
-  width: var(--day);
-  height: var(--day);
-}
-
-.day-number {
-  font-size: 10px; /* stays readable at small sizes */
-  top: 6px;
-  left: 10px; /* tuck number in a bit for smaller cells */
-}
-
-.day-icons {
-  top: 8px;
-  left: 8px;
-  gap: 3px;
-}
-
-/* Buttons: allow wrapping on small screens */
-.main_buttons {
-  flex-wrap: wrap;
-}
-
-/* Navbar: tighter spacing on small screens */
-.navbar {
-  padding: 5px 16px;
-}
-.navbar .links {
-  gap: 12px;
-}
-
-/* ===============================
-   ≥ 480px   (large phones)
-   =============================== */
-@media (min-width: 480px) {
-  :root {
-    --day: 56px;
-    --gap: 10px;
-  }
-
+/* Responsive Design Breakpoints */
+@media (max-width: 320px) {
   .navbar {
-    padding: 6px 24px;
+    padding: 8px;
   }
 
-  .main__login_button,
-  .main__register_button,
-  .main_add_activity,
-  .main_track_activity {
-    width: 120px;
-  }
-}
-
-/* ===============================
-   ≥ 768px   (tablets)
-   =============================== */
-@media (min-width: 768px) {
-  :root {
-    --day: 64px;
-    --gap: 12px;
-  }
-
-  .tracking-page {
-    flex-direction: row;
-    gap: 24px;
-    padding: 48px;
+  .nav-container {
+    flex-direction: column; /* brand on top, links below */
+    align-items: center;
+    gap: 8px;
   }
 
   .navbar .brand img {
-    height: 44px;
+    height: 30px; /* smaller logo */
+    margin-bottom: 30px;
   }
+
   .navbar .links {
-    gap: 18px;
+    width: 100%;
+    justify-content: center; /* center links */
+    flex-wrap: wrap; /* wrap if needed */
+    gap: 8px 16px;
   }
 
-  .day-number {
-    font-size: 11px;
-    top: 8px;
-    left: 12px;
+  .navbar a {
+    font-size: 15px; /* slightly smaller text */
+    padding: 6px 8px; /* bigger tap target */
   }
 
-  .intro-quote,
-  .intro-text,
-  .intro-text-description {
-    /* Nudges the top end a bit for tablets */
-    font-size: clamp(22px, 3.2vw, 40px);
-  }
-}
-
-/* ===============================
-   ≥ 1024px  (small laptops)
-   =============================== */
-@media (min-width: 1024px) {
-  :root {
-    --day: 72px;
-    --gap: 14px;
+  .hero h1 {
+    font-size: 40px;
   }
 
-  .navbar {
-    padding: 8px 40px;
-  }
-
-  .main_buttons {
-    gap: 24px;
-  }
-
-  .calendar-container {
-    margin-top: 2%;
-  }
-
-  .day-number {
-    font-size: 12px;
-    top: 10px;
-    left: 14px;
-  }
-}
-
-/* ===============================
-   ≥ 1280px  (desktops)
-   =============================== */
-@media (min-width: 1280px) {
-  :root {
-    --day: 80px;
-    --gap: 15px;
-  }
-
-  .intro-quote,
-  .intro-text,
-  .intro-text-description {
-    /* Comfortable reading sizes on desktop */
-    font-size: clamp(24px, 2.2vw, 40px);
-  }
-}
-
-/* ===============================
-   ≥ 1536px  (large desktops)
-   =============================== */
-@media (min-width: 1536px) {
-  :root {
-    --day: 88px;
-    --gap: 16px;
-  }
-}
-
-/* ===============================
-   Navigation stacking (very narrow)
-   =============================== */
-@media (max-width: 420px) {
-  .nav-container {
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-  }
-  .navbar .links {
-    justify-content: center;
-    flex-wrap: wrap;
-    row-gap: 6px;
-  }
-}
-
-/* ===============================
-   Hero & buttons spacing tweaks
-   =============================== */
-@media (max-width: 767px) {
-  .hero {
-    gap: 12px;
-  }
-  .buttons-section {
-    gap: 12px;
-  }
-  .main_buttons {
-    flex-direction: column; /* stack on phones */
+  .footer-branding {
     align-items: center;
   }
-  .main__login_button,
-  .main__register_button,
-  .main_add_activity,
-  .main_track_activity {
-    width: 160px;
-  }
-}
 
-/* ===============================
-   Activity pills grid tightness
-   =============================== */
-@media (max-width: 600px) {
-  .chosen-activity-list {
-    gap: 10px;
-    max-width: 90vw;
-    margin-top: -40px; /* reduce the lift on small screens */
+  .footer-grid {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
   }
-}
 
-/* ===============================
-   Forms tightening on mobile
-   =============================== */
-@media (max-width: 480px) {
-  .login-form label,
-  .register-form label {
-    width: 88px;
-    font-size: 14px;
+  .site-footer,
+  .site-footer p,
+  .site-footer ul {
+    text-align: left;
+  }
+
+  .intro-text,
+  .intro-text-description,
+  .intro-quote {
+    font-size: 24px;
+    padding: 10px;
   }
   input {
-    border-radius: 24px;
+    width: 100px;
+
+    border-radius: 30px;
+    margin-top: 30px;
   }
+}
+/* ≥ 480px */
+@media (320px <= width <= 480px) {
+  .hero h1 {
+    font-size: 40px;
+  }
+
+  .footer-branding {
+    align-items: center;
+  }
+
+  .footer-grid {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .site-footer,
+  .site-footer p,
+  .site-footer ul {
+    text-align: left;
+  }
+
+  .intro-text,
+  .intro-text-description,
+  .intro-quote {
+    font-size: 24px;
+    padding: 10px;
+  }
+  input {
+    width: 100px;
+
+    border-radius: 30px;
+    margin-top: 30px;
+  }
+}
+
+@media (480px <= width <= 767px) {
+  .hero h1 {
+    font-size: 50px;
+    padding: 20px;
+  }
+}
+
+/* ≥ 768px (tablet) */
+@media (768px <= width <= 1023px) {
 }
