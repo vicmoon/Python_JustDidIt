@@ -115,10 +115,10 @@ class ActivityLog(db.Model):
 class User(db.Model, UserMixin):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    email: Mapped[str] = mapped_column(String(100), unique=True)
-    password: Mapped[str] = mapped_column(String(225))
-    name: Mapped[str] = mapped_column(String(225))
+    id       = db.Column(db.Integer, primary_key=True)
+    email    = db.Column(db.String(255), unique=True, index=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)   # <- 255 (not 225)
+    name     = db.Column(db.String(255), nullable=False)
 
     activities: Mapped[list[Activity]] = relationship("Activity", backref="user", lazy=True)
 
@@ -138,8 +138,25 @@ def load_user(user_id):
 # ---------------------------------------------------------------------
 with app.app_context():
     db.create_all()
+    
 
     uri = app.config["SQLALCHEMY_DATABASE_URI"]
+    if uri.startswith("postgresql+"):
+        try:
+            db.session.execute(text("""
+                ALTER TABLE users
+                ALTER COLUMN email    TYPE VARCHAR(255),
+                ALTER COLUMN password TYPE VARCHAR(255),
+                ALTER COLUMN name     TYPE VARCHAR(255)
+            """))
+            db.session.commit()
+            current_app.logger.info("Applied ALTER TABLE users -> VARCHAR(255).")
+        except Exception as e:
+            # If columns already 255 (or table missing), this will error—just log & continue
+            current_app.logger.info("ALTER skipped: %s", e)
+            db.session.rollback()
+
+    # Verify PRAGMA foreign_keys is ON for SQLite
     if uri.startswith("sqlite:"):
         db.session.execute(text("PRAGMA foreign_keys=ON"))
         fk = db.session.execute(text("PRAGMA foreign_keys")).scalar()
