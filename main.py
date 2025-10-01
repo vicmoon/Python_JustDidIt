@@ -6,7 +6,7 @@ from flask_wtf import CSRFProtect
 from flask_wtf.csrf import generate_csrf
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, ForeignKey, Date, text, event
+from sqlalchemy import Integer, String, ForeignKey, Date, text, event, inspect
 from sqlalchemy.engine import Engine
 from forms import ActivityForm, LoginForm, RegisterForm
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
@@ -24,7 +24,9 @@ from urllib.parse import urlparse
 # App setup
 # ---------------------------------------------------------------------
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False 
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_pre_ping": True}
 
 
 # --- PostgreSQL on Railway, SQLite locally fallback ---
@@ -34,11 +36,15 @@ if raw.startswith("postgres://"):
 elif raw.startswith("postgresql://"):
     raw = raw.replace("postgresql://", "postgresql+psycopg://", 1)
 
+# Railway PG expects TLS
+if raw.startswith("postgresql+psycopg://") and "sslmode=" not in raw:
+    raw += ("&" if "?" in raw else "?") + "sslmode=require"
+
 app.config["SQLALCHEMY_DATABASE_URI"] = raw
 
 
 
-csrf = CSRFProtect(app)                           # enable CSRF globally
+csrf = CSRFProtect(app)                           
 
 @app.context_processor
 def inject_csrf_token():
@@ -111,8 +117,8 @@ class User(db.Model, UserMixin):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(100), unique=True)
-    password: Mapped[str] = mapped_column(String(100))
-    name: Mapped[str] = mapped_column(String(1000))
+    password: Mapped[str] = mapped_column(String(225))
+    name: Mapped[str] = mapped_column(String(225))
 
     activities: Mapped[list[Activity]] = relationship("Activity", backref="user", lazy=True)
 
@@ -140,6 +146,9 @@ with app.app_context():
         current_app.logger.info("SQLite PRAGMA_foreign_keys=%s", fk)
     else:
         current_app.logger.info("Non-SQLite DB; skipping PRAGMA.")
+
+    insp = inspect(db.engine)
+    app.logger.info("Tables present: %s", insp.get_table_names())
 
 
 # ---------------------------------------------------------------------
@@ -184,13 +193,19 @@ def register():
         hashed_pass = generate_password_hash(password, method='scrypt', salt_length=8)
         new_user = User(name=name, email=email, password=hashed_pass)
 
-        db.session.add(new_user)
-        db.session.commit()
-        login_user(new_user)
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user)
 
-        session['name'] = name
-        return redirect(url_for("home"))
+            session['name'] = name
+            return redirect(url_for("home"))
+        except Exception:
+            db.session.rollback()
+            flash("An error occurred. Please try again.", "danger")
+            return redirect(url_for('register'))
 
+        
     return render_template("register.html", form=form)
 
 
