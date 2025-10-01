@@ -25,19 +25,17 @@ from urllib.parse import urlparse
 # ---------------------------------------------------------------------
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+
+
 # --- PostgreSQL on Railway, SQLite locally fallback ---
-raw_db_url = os.getenv("DATABASE_URL", "sqlite:///activities.db")
+raw = os.getenv("DATABASE_URL", "sqlite:///activities.db")
+if raw.startswith("postgres://"):
+    raw = raw.replace("postgres://", "postgresql+psycopg://", 1)
+elif raw.startswith("postgresql://"):
+    raw = raw.replace("postgresql://", "postgresql+psycopg://", 1)
 
-# Railway sometimes provides `postgres://...` – SQLAlchemy wants `postgresql+psycopg2://...`
-if raw_db_url.startswith("postgres://"):
-    raw_db_url = raw_db_url.replace("postgres://", "postgresql+psycopg2://", 1)
-elif raw_db_url.startswith("postgresql://"):
-    # make explicit driver for SQLAlchemy 2.x
-    raw_db_url = raw_db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+app.config["SQLALCHEMY_DATABASE_URI"] = raw
 
-app.config["SQLALCHEMY_DATABASE_URI"] = raw_db_url
-# optional but recommended
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_pre_ping": True}
 
 
 csrf = CSRFProtect(app)                           # enable CSRF globally
