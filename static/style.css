@@ -764,8 +764,20 @@ button.icon-choice {
     grid-template-columns: repeat(4, 60px);
     justify-content: center;
     margin: 6px 0 18px;
+    margin-top: 40px;
     padding: 0;
     list-style: none;
+  }
+  .weekday-row {
+    margin-top: 80px;
+    grid-template-columns: repeat(4, 60px);
+    display: none;
+  }
+
+  .calendar-box {
+    position: relative;
+    height: 60px;
+    width: 60px;
   }
 }
 /* ≥ 480px */
@@ -803,12 +815,65 @@ button.icon-choice {
     border-radius: 30px;
     margin-top: 30px;
   }
+  .tracking-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 60px);
+    justify-content: center;
+    margin: 6px 0 18px;
+    margin-top: 40px;
+    padding: 0;
+    list-style: none;
+  }
+  .weekday-row {
+    margin-top: 80px;
+    grid-template-columns: repeat(4, 60px);
+    display: none;
+  }
+
+  .calendar-box {
+    position: relative;
+    height: 60px;
+    width: 60px;
+  }
 }
 
 @media (480px <= width <= 767px) {
   .hero h1 {
     font-size: 50px;
     padding: 20px;
+  }
+  .tracking-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 60px);
+    justify-content: center;
+    margin: 6px 0 18px;
+    margin-top: 40px;
+    padding: 0;
+    list-style: none;
+  }
+  .weekday-row {
+    margin-top: 80px;
+    grid-template-columns: repeat(7, 60px);
+  }
+
+  .calendar-box {
+    position: relative;
+    height: 60px;
+    width: 60px;
   }
 }
 
