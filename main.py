@@ -11,7 +11,7 @@ from sqlalchemy.engine import Engine
 from forms import ActivityForm, LoginForm, RegisterForm
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-import my_creds
+# import my_creds
 import json
 from collections import defaultdict
 import datetime as dt
