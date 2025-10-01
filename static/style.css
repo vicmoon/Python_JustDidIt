@@ -733,6 +733,9 @@ button.icon-choice {
     align-items: center;
     margin-top: 20px;
   }
+  .footer-links {
+    display: none;
+  }
 
   .site-footer,
   .site-footer p,
@@ -805,10 +808,13 @@ button.icon-choice {
 
   .footer-grid {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     margin-top: 20px;
+  }
+  .footer-links {
+    display: none;
   }
 
   .site-footer,
