@@ -118,7 +118,9 @@ class User(db.Model, UserMixin):
 
 
 # ---------------------------------------------------------------------
+
 # User loader
+
 # ---------------------------------------------------------------------
 @login_manager.user_loader
 def load_user(user_id):
@@ -130,14 +132,14 @@ def load_user(user_id):
 # ---------------------------------------------------------------------
 with app.app_context():
     db.create_all()
-     # Run PRAGMA only on SQLite; Postgres doesn't support it (and enforces FK by default)
-    dialect = db.session.bind.dialect.name  # "sqlite", "postgresql", etc.
-    if dialect == "sqlite":
+
+    uri = app.config["SQLALCHEMY_DATABASE_URI"]
+    if uri.startswith("sqlite:"):
         db.session.execute(text("PRAGMA foreign_keys=ON"))
         fk = db.session.execute(text("PRAGMA foreign_keys")).scalar()
-        current_app.logger.info("SQLite PRAGMA foreign_keys=%s", fk)
+        current_app.logger.info("SQLite PRAGMA_foreign_keys=%s", fk)
     else:
-        current_app.logger.info("Dialect=%s; skipping SQLite PRAGMA check", dialect)
+        current_app.logger.info("Non-SQLite DB; skipping PRAGMA.")
 
 
 # ---------------------------------------------------------------------
