@@ -25,7 +25,7 @@ from urllib.parse import urlparse
 # App setup
 # ---------------------------------------------------------------------
 app = Flask(__name__)
-app.config['SECRET_KEY'] = my_creds.SECRET_KEY
+app.config['SECRET_KEY'] = os.getenv.SECRET_KEY
 # --- PostgreSQL on Railway, SQLite locally fallback ---
 raw_db_url = os.getenv("DATABASE_URL", "sqlite:///activities.db")
 
