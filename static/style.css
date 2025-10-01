@@ -855,6 +855,18 @@ button.icon-choice {
     height: 60px;
     width: 60px;
   }
+
+  .chosen-activity-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    margin-top: 100px;
+    max-width: 300px;
+  }
 }
 
 @media (480px <= width <= 767px) {
