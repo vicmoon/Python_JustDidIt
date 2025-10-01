@@ -779,6 +779,11 @@ button.icon-choice {
     height: 60px;
     width: 60px;
   }
+
+  .chosen-activity-list {
+    max-width: 300px;
+    margin-top: 70px;
+  }
 }
 /* ≥ 480px */
 @media (320px <= width <= 480px) {
