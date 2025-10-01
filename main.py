@@ -11,7 +11,6 @@ from sqlalchemy.engine import Engine
 from forms import ActivityForm, LoginForm, RegisterForm
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-# import my_creds
 import json
 from collections import defaultdict
 import datetime as dt
@@ -25,7 +24,7 @@ from urllib.parse import urlparse
 # App setup
 # ---------------------------------------------------------------------
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv.SECRET_KEY
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 # --- PostgreSQL on Railway, SQLite locally fallback ---
 raw_db_url = os.getenv("DATABASE_URL", "sqlite:///activities.db")
 
