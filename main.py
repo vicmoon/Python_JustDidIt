@@ -176,36 +176,36 @@ def home():
 def register():
     form = RegisterForm()
 
-    if form.validate_on_submit():
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = request.form.get('password')
+    if request.method == "POST" and form.validate_on_submit():
+        name = form.name.data.strip()
+        email = form.email.data.strip().lower()
+        password = form.password.data
 
         if not name or not email or not password:
-            flash("All fields are required", "danger")
-            return redirect(url_for('register'))
+            flash("All fields are required.", "danger")
+            return redirect(url_for("register"))
 
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             flash("User already exists. Please log in.", "warning")
-            return redirect(url_for('login'))
-
-        hashed_pass = generate_password_hash(password, method='scrypt', salt_length=8)
-        new_user = User(name=name, email=email, password=hashed_pass)
+            return redirect(url_for("login"))
 
         try:
+            hashed = generate_password_hash(password, method="scrypt", salt_length=8)
+            new_user = User(name=name, email=email, password=hashed)
             db.session.add(new_user)
             db.session.commit()
-            login_user(new_user)
 
-            session['name'] = name
+            login_user(new_user)
+            session["name"] = name
             return redirect(url_for("home"))
         except Exception:
             db.session.rollback()
+            current_app.logger.exception("Register failed")
             flash("An error occurred. Please try again.", "danger")
-            return redirect(url_for('register'))
+            return redirect(url_for("register"))
 
-        
+    # GET or invalid POST falls through to render the form
     return render_template("register.html", form=form)
 
 
