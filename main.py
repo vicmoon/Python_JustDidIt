@@ -130,9 +130,14 @@ def load_user(user_id):
 # ---------------------------------------------------------------------
 with app.app_context():
     db.create_all()
-    # Log PRAGMA to confirm FK enforcement is ON (should print 1)
-    fk = db.session.execute(text("PRAGMA foreign_keys")).scalar()
-    current_app.logger.info("SQLite PRAGMA foreign_keys=%s", fk)
+     # Run PRAGMA only on SQLite; Postgres doesn't support it (and enforces FK by default)
+    dialect = db.session.bind.dialect.name  # "sqlite", "postgresql", etc.
+    if dialect == "sqlite":
+        db.session.execute(text("PRAGMA foreign_keys=ON"))
+        fk = db.session.execute(text("PRAGMA foreign_keys")).scalar()
+        current_app.logger.info("SQLite PRAGMA foreign_keys=%s", fk)
+    else:
+        current_app.logger.info("Dialect=%s; skipping SQLite PRAGMA check", dialect)
 
 
 # ---------------------------------------------------------------------
