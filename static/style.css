@@ -411,6 +411,7 @@ input {
   padding: 0;
   list-style: none;
 }
+
 .weekday-row li {
   font-weight: 600;
   text-align: center;
@@ -750,6 +751,22 @@ button.icon-choice {
     border-radius: 30px;
     margin-top: 30px;
   }
+
+  .tracking-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 60px);
+    justify-content: center;
+    margin: 6px 0 18px;
+    padding: 0;
+    list-style: none;
+  }
 }
 /* ≥ 480px */
 @media (320px <= width <= 480px) {
@@ -783,7 +800,6 @@ button.icon-choice {
   }
   input {
     width: 100px;
-
     border-radius: 30px;
     margin-top: 30px;
   }

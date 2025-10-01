@@ -17,7 +17,7 @@ import datetime as dt
 from datetime import date
 import sqlite3
 import os
-# import my_creds  # local file with SECRET_KEY
+#import my_creds  # local file with SECRET_KEY
 from urllib.parse import urlparse
 
 
@@ -26,7 +26,7 @@ from urllib.parse import urlparse
 # ---------------------------------------------------------------------
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-# app.config["SECRET_KEY"] = my_creds.SECRET_KEY
+#app.config["SECRET_KEY"] = my_creds.SECRET_KEY
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False 
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_pre_ping": True}
 
