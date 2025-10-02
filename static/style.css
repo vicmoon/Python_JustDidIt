@@ -101,7 +101,6 @@ section {
 
 .main_buttons button:hover {
   background-color: #67c090;
-  border: olive 1px solid;
   cursor: pointer;
 }
 
@@ -165,6 +164,11 @@ section {
 .logo img {
   margin: 0;
   max-height: 60px;
+}
+
+.logo img:hover {
+  transform: scale(1.1);
+  cursor: pointer;
 }
 
 .alert {
@@ -317,6 +321,7 @@ input {
 
 .prev-next-nav {
   margin-bottom: 5px;
+  display: none;
 }
 .prev-next-nav:hover {
   transform: scale(1.1);
@@ -659,8 +664,12 @@ button.icon-choice {
 
 .footer-logo {
   max-height: 80px;
-  height: auto;
   display: block;
+}
+
+.footer-logo:hover {
+  transform: scale(1.1);
+  cursor: pointer;
 }
 
 .link-list {
@@ -712,25 +721,20 @@ button.icon-choice {
     font-size: 40px;
   }
 
-  .footer-branding {
-    align-items: left;
-  }
-
-  .footer-grid {
+  /* .footer-grid {
     display: flex;
     flex-direction: column;
     justify-content: center;
+  } */
+
+  .footer-branding {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    margin-top: 20px;
-  }
-  .footer-links {
-    display: none;
   }
 
-  .site-footer,
-  .site-footer p,
-  .site-footer ul {
-    text-align: left;
+  .footer-links {
+    display: none;
   }
 
   .intro-text,
@@ -798,9 +802,6 @@ button.icon-choice {
     margin-top: 80px;
     max-width: 300px;
   }
-  .footer-branding {
-    flex-direction: row;
-  }
 }
 
 /* ≥ 480px */
@@ -814,18 +815,12 @@ button.icon-choice {
   .hero h1 {
     font-size: 40px;
   }
-
   .footer-branding {
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .footer-grid {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-  }
   .footer-links {
     display: none;
   }
@@ -833,7 +828,7 @@ button.icon-choice {
   .site-footer,
   .site-footer p,
   .site-footer ul {
-    text-align: left;
+    text-align: center;
   }
 
   .intro-text,
