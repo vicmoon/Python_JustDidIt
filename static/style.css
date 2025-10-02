@@ -772,6 +772,19 @@ button.icon-choice {
     padding: 0;
     list-style: none;
   }
+
+  .prev-next-nav {
+    display: none;
+  }
+
+  .icon-grid {
+    display: flex;
+    max-width: 400px;
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
   .weekday-row {
     margin-top: 80px;
     grid-template-columns: repeat(4, 60px);
@@ -796,6 +809,7 @@ button.icon-choice {
     max-width: 300px;
   }
 }
+
 /* ≥ 480px */
 @media (320px <= width <= 480px) {
   .hero h1 {
@@ -853,6 +867,10 @@ button.icon-choice {
   .weekday-row {
     margin-top: 80px;
     grid-template-columns: repeat(4, 60px);
+    display: none;
+  }
+
+  .prev-next-nav {
     display: none;
   }
 
