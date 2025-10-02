@@ -2,17 +2,17 @@
   <div class="footer-grid">
     <div class="footer-branding">
       <img
-        src="{{ url_for('static', filename='cat_logo.png') }}"
+        src="{{ url_for('static', filename='new_logo.svg') }}"
         alt="Just Did It logo"
         class="footer-logo"
       />
 
-      <p class="mb-0">All rights reserved.</p>
-      <p class="mb-1">&copy; {{ current_year }}</p>
+      <p class="mb-0">&copy; {{ current_year }} All rights reserved.</p>
+      <!-- <p class="mb-1">&copy; {{ current_year }}</p> -->
     </div>
 
     <div class="footer-links">
-      <p class="mb-2">About me</p>
+      <p class="column-title">About me</p>
       <ul class="link-list">
         <li>
           <a href="#" target="_blank">Portfolio</a>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="footer-links">
-      <p class="mb-2">Built with</p>
+      <p class="column-title">Built with</p>
       <ul class="link-list">
         <li>
           <a href="https://flask.palletsprojects.com/" target="_blank">Flask</a>
@@ -37,7 +37,7 @@
       </ul>
     </div>
     <div class="footer-links">
-      <p class="mb-2">Built with</p>
+      <p class="column-title">Built with</p>
       <ul class="link-list">
         <li>
           <a href="https://roughjs.com/" target="_blank">Rough.js</a>
